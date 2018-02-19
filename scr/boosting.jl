@@ -35,12 +35,16 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 	myscratch.actualbeta = zeros(length(myscratch.pooledunibeta.unibeta))
 	myscratch.actualnom = myscratch.pooledunibeta.unibeta
 
+	
+
 	myscratch.wantedlabels = selectionofcovs(myscratch.pooledunibeta, myscratch.x)
 	myscratch.pooledcovarmat = calc_covarmat(myscratch.wantedlabels)
 	myscratch.usedlabels = deepcopy(myscratch.wantedlabels)
 
+
+
 	while ((myscratch.actualstepno <= myscratch.stepno) &&
-			(length(unique(myscratch.actual)) < myscratch.maxvar))
+			(length(unique(myscratch.selections)) < myscratch.maxvar))
 		if(myscratch.actualstepno > 1)
 			reboost!(myscratch)
 		end
