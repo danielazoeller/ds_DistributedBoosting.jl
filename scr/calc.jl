@@ -20,7 +20,7 @@ function calc_covarmat(wantedlabels::Array{String,1})
 			}
 			res <- res/(ncov-1)
 			"""
-			covmat[i,j] =covmat[j,i] = rcopy(Array{Float64},cov_res)
+			covmat[i,j] =covmat[j,i] = rcopy(cov_res)
 		end
 		covmat[i,i] = 1.0
 	end
@@ -51,10 +51,10 @@ function calc_covarmat(wantedlabels::Array{String,1}, usedlabels::Array{String,1
 			res <- res/(ncov-1)
 			"""
 			if(i <= length(usedlabels) && j <= length(wantedlabels))
-				@inbounds covmat2[i,j] = covmat2[j,i] = rcopy(Array{Float64},cov_res)
+				@inbounds covmat2[i,j] = covmat2[j,i] = rcopy(cov_res)
 			end
 			if(j >= i+1 && i <= length(wantedlabels) && j <= length(wantedlabels))
-				@inbounds covmat[i,j]  = covmat2[j,i] = rcopy(Array{Float64},cov_res)
+				@inbounds covmat[i,j]  = covmat2[j,i] = rcopy(cov_res)
 			end
 		end
 		covmat[i,i] = covmat2[i,i] = 1.0
