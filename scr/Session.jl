@@ -123,22 +123,9 @@ end
 
 """
 Function to log out of DataSHIELD.
-Arguments:
-path_RLibrary::String -> Path to R library where R packages opal, dsBaseClient, dsStatsClient and dsModellingClient are saved
-url::Array{String,1} -> Array containing URLs to all DataSHIELD-Server as Strings.
-user::String -> String containing the User-Name for login
-password::String -> String containin either the password or the name of the private key file.
-table::Array{String,1} -> Array containing the table names (either one dimensional if always the same or of the same length as the URL array)
-servernames::Array{String,1} -> Array containing the server names (same dimension as url).
-check::Bool -> If true: It is checked if the variables are standardized, if false not. The default is true.
-ignore::Bool -> Only relevant if check=true. If true: the algorithm will continue even if the variables are not standardizes, if false the algorithm will stop. The default is false.
 """
-function ds_start(path_RLibrary::String, url::Array{String,1},user::String,password::String,table::Array{String,1},servernames::Array{String,1}, check::Bool=true, ignore::Bool=false)
-    ds_loadPkg(path_RLibrary)
-
-    ds_login(url, user, password, table, servernames)
-    if(check)
-        warn("The standardization of the variables will be checked (mean=0 (firstly), sd=1). All variables are checked subsequently and the algorithm stops when at least one variable is not standardized. The algrotihm might take some time.")
-        ds_check(length(servernames),ignore)
-    end
+function ds_logout()
+    R"""
+    datashield.logout(opal_login)
+    """
 end

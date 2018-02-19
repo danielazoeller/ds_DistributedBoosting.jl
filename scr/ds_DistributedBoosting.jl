@@ -37,7 +37,7 @@ mutable struct Boostscratch
 end
 
 
-include("SessionStart.jl")
+include("Session.jl")
 include("calc.jl")
 include("boost.jl")
 include("boosting.jl")
