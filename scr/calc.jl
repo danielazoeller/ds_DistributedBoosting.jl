@@ -15,8 +15,8 @@ function calc_covarmat(wantedlabels::Array{String,1})
 			covs <- ds.cov(x=cov_x,y=cov_y)
 			res <- ncov <- 0
 			for(i in 1:length(covs)){
-  				res <- res + (covs[[i]][1] * covs[[i]][2])
-  				ncov <- ncov + covs[[i]][2]
+  				res <- res + (unlist(covs[[i]][1]) * unlist(covs[[i]][2]))
+  				ncov <- ncov + unlist(covs[[i]][2])
 			}
 			res <- res/(ncov-1)
 			"""
@@ -45,8 +45,8 @@ function calc_covarmat(wantedlabels::Array{String,1}, usedlabels::Array{String,1
 			covs <- ds.cov(x=cov_x,y=cov_y)
 			res <- ncov <- 0
 			for(i in 1:length(covs)){
-  				res <- res + (covs[[i]][1] * covs[[i]][2])
-  				ncov <- ncov + covs[[i]][2]
+				res <- res + (unlist(covs[[i]][1]) * unlist(covs[[i]][2]))
+				ncov <- ncov + unlist(covs[[i]][2])
 			}
 			res <- res/(ncov-1)
 			"""
@@ -68,7 +68,7 @@ wantedlabels::Array{String,1} -> Array which contains the wantedlabels to give i
 y::String -> Array which contains the name of the endpoint variable
 """
 function calc_unibeta(wantedlabels::Array{String,1},y::String)
-	unibeta::Array{Float64} = zeros(length(wantedlabels))
+	unibeta = Array{Float64}(length(wantedlabels))
 	for i = 1 : length(wantedlabels)
 		unib = R"""
 			vary <- paste('D',$y,sep="$")
