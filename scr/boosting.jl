@@ -18,7 +18,7 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 							 Covarmat(Array{Float64,2}(),
 							 		  Array{String,1}()),
 							 Array{Float64,1}(stepno),
-							 Array{String, 1}(stepno),
+							 Array{String,1}(stepno),
 							 Array{String,1}(),
 							 Array{String,1}(),
 							 0.1,
@@ -43,8 +43,7 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 
 	stopper = 0
 	
-	while ((myscratch.actualstepno <= myscratch.stepno) &&
-			() < myscratch.maxvar))
+	while ((myscratch.actualstepno <= myscratch.stepno) && (stopper < myscratch.maxvar))
 		if(myscratch.actualstepno > 1)
 			reboost!(myscratch)
 		end
@@ -61,11 +60,12 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 		if(myscratch.actualstepno >= 2)
 			println(myscratch.actualstepno," bosstingsteps performed \n recent selected labels: ", myscratch.selections)
 		end
-		myscratch.actualstepno -= 1
-
 	end
 
-	println("--------------------------------------------------------------------------------------------------------------------------------- \n Algorithm ended successfully.")
+	myscratch.actualstepno -= 1
+
+	println("--------------------------------------------------------------------------------------------------------------------------------- \n 
+			Algorithm ended successfully.")
 	if(myscratch.actualstepno == myscratch.stepno)
 		println("Reason for termination: Maximum number of steps reached.")
 	else
