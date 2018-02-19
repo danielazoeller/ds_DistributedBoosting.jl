@@ -7,8 +7,7 @@ myscratch::Boostscratch -> Boostscratch-Data-Container for boosting
 function boost!(myscratch::Boostscratch)
 	myscratch.actualscore = myscratch.actualnom.^2 # ./varx
 	myscratch.actualsel = indmax(myscratch.actualscore)
-	myscratch.selections[myscratch.actualstepno] =
-		myscratch.pooledunibeta.labels[myscratch.actualsel]
+	myscratch.selections = vcat(myscratch.selections, myscratch.pooledunibeta.labels[myscratch.actualsel])
 	myscratch.actualupdates[myscratch.actualstepno] =
 		myscratch.nu * myscratch.actualnom[myscratch.actualsel]
 	myscratch.actualbeta[myscratch.actualsel] +=
@@ -33,13 +32,13 @@ Arguments:
 myscratch::Boostscratch -> Bootscratch-Data-Container for boosting
 """
 function reboost!(myscratch::Boostscratch)
-	for i = 1 : myscratch.actualstepno
+	println("a")
+	for i = 1 : (myscratch.actualstepno-1)
 		covar = getcovarfromtriangular(myscratch.pooledcovarmat.covarmat,
 					findfirst(myscratch.pooledcovarmat.labels, myscratch.selections[i]))
-		@simd for j = 1 : length(myscratch.wantedlabels)
-			@inbounds myscratch.actualnom[findfirst(myscratch.pooledunibeta.labels, myscratch.wantedlabels[j])] -=
+		for j = 1 : length(myscratch.wantedlabels)
+			myscratch.actualnom[findfirst(myscratch.pooledunibeta.labels, myscratch.wantedlabels[j])] -=
 				myscratch.actualupdates[i] * covar[findfirst(myscratch.pooledcovarmat.labels, myscratch.wantedlabels[j])]
 		end
 	end
-	myscratch.actualstepno += 1
 end

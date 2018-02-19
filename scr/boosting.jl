@@ -7,7 +7,6 @@ labels::Array{String,1} -> Names of the potential predictor variables
 a::Int -> Number of labels for the covariance matrix to start with
 x::Int -> Number of labels which should be additionally called
 maxvar::Int -> Maximum number of selected variables
-maxvar::Int -> Maximum number of boosting steps
 """
 function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x::Int, maxvar::Int=stepno)
 	myscratch = Boostscratch(1,
@@ -18,7 +17,7 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 							 Covarmat(Array{Float64,2}(),
 							 		  Array{String,1}()),
 							 Array{Float64,1}(stepno),
-							 Array{String,1}(stepno),
+							 Array{String,1}(),
 							 Array{String,1}(),
 							 Array{String,1}(),
 							 0.1,
@@ -35,31 +34,33 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 	myscratch.actualbeta = zeros(length(myscratch.pooledunibeta.unibeta))
 	myscratch.actualnom = myscratch.pooledunibeta.unibeta
 
-	
-
-	myscratch.wantedlabels = selectionofcovs(myscratch.pooledunibeta, myscratch.x)
+	myscratch.wantedlabels = selectionofcovs(myscratch.pooledunibeta, myscratch.a)
 	myscratch.pooledcovarmat = calc_covarmat(myscratch.wantedlabels)
 	myscratch.usedlabels = deepcopy(myscratch.wantedlabels)
+
+	newselval = boost!(myscratch)
+	myscratch.wantedlabels = getselections(myscratch, newselval)
+		
+	println(myscratch.actualstepno," bosstingsteps performed \n recent selected labels: ", myscratch.selections)
+
+	myscratch.actualstepno += 1
 
 	stopper = 0
 	
 	while ((myscratch.actualstepno <= myscratch.stepno) && (stopper < myscratch.maxvar))
-		if(myscratch.actualstepno > 1)
+		if(length(myscratch.wantedlabels) > 0)
+			warn(length(myscratch.wantedlabels), " new covariances are called, this might take some time.")
+			calc_covarmat!(myscratch)
 			reboost!(myscratch)
 		end
+		
 		newselval = boost!(myscratch)
 		myscratch.wantedlabels = getselections(myscratch, newselval)
-		
+				
+		stopper = length(unique(myscratch.selections))
+
+		println(myscratch.actualstepno," bosstingsteps performed \n recent selected labels: ", myscratch.selections)
 		myscratch.actualstepno += 1
-
-		expansion = calc_covarmat(myscratch.wantedlabels)
-		merge_covarmats!(myscratch, expansion)
-
-		stopper = length(unique(myscratch.selections)
-
-		if(myscratch.actualstepno >= 2)
-			println(myscratch.actualstepno," bosstingsteps performed \n recent selected labels: ", myscratch.selections)
-		end
 	end
 
 	myscratch.actualstepno -= 1

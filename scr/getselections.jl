@@ -41,19 +41,19 @@ function getselections(myscratch::Boostscratch, newselval::Float64)
 		end
 	end
 	if(myscratch.x > 0 && length(wantedlabels) > 0)
-		wantedlabels = vcat(wantedlabels, selectionofcovs(Unibeta(myscratch.actualnom, myscratch.pooledunibeta.labels), myscratch.x, vcat(myscratch.pooledcovarmat.labels, wantedlabels)))
+		wantedlabels = vcat(wantedlabels, selectionofcovs(Unibeta(myscratch.actualnom, myscratch.pooledunibeta.labels), 
+															myscratch.x, vcat(myscratch.pooledcovarmat.labels, wantedlabels)))
 	end
 	return wantedlabels
 end
 
+""" 
+Function to obtain the covariances with the selected variable
+Arguments:
+cov::Array{Float64,2} -> Covariance Matrix (saved in Boostscatrch.pooledcovarmat)
+index::Int -> Selected covariate
+"""
 function getcovarfromtriangular(cov::Array{Float64,2}, index::Int)
-	return reshape(hcat(reshape(cov[1:index,index],1,index),cov[index,(index+1):size(cov)[2]]),size(cov)[2])
+	return cov[index,:]
 end
-
-function merge_covarmats!(myscratch::Boostscratch, expansion::Array{Float64, 2})
-	myscratch.pooledcovarmat.covarmat = hcat(vcat(myscratch.pooledcovarmat.covarmat,zeros(size(expansion)[1] - size(myscratch.pooledcovarmat.covarmat)[1], size(myscratch.pooledcovarmat.covarmat)[2])),expansion)
-	myscratch.pooledcovarmat.labels = vcat(myscratch.pooledcovarmat.labels, myscratch.wantedlabels)
-end
-
-
 
