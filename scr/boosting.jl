@@ -41,10 +41,10 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 	myscratch.pooledcovarmat = calc_covarmat(myscratch.wantedlabels)
 	myscratch.usedlabels = deepcopy(myscratch.wantedlabels)
 
-
-
+	stopper = 0
+	
 	while ((myscratch.actualstepno <= myscratch.stepno) &&
-			(length(unique(myscratch.selections)) < myscratch.maxvar))
+			() < myscratch.maxvar))
 		if(myscratch.actualstepno > 1)
 			reboost!(myscratch)
 		end
@@ -55,6 +55,8 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 
 		expansion = calc_covarmat(myscratch.wantedlabels)
 		merge_covarmats!(myscratch, expansion)
+
+		stopper = length(unique(myscratch.selections)
 
 	end
 
