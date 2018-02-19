@@ -1,5 +1,9 @@
 module ds_DistributedBoosting
+
 using RCall
+
+export Unibeta, Covarmat, Boostscratch, ds_loadPkg, ds_login, ds_check, ds_start, calc_covarmat, calc_unibeta, boost!,
+		reboost!, ds_boosting, selectionofcovs, getselections, getcovarfromtriangular, merge_covarmats!
 
 struct Unibeta
 	unibeta::Array{Float64,1}
