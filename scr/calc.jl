@@ -9,7 +9,7 @@ function calc_covarmat(wantedlabels::Array{String,1})
 		interim1 = wantedlabels[i]
 		for j = i + 1 : length(wantedlabels)
 			interim2 = wantedlabels[j]
-			R"""
+			cov_res = R"""
 			cov_x <- paste('D',$interim1,sep="$")
 			cov_y <- paste('D',$interim2,sep="$")
 			covs <- ds.cov(x=cov_x,y=cov_y)
@@ -20,7 +20,7 @@ function calc_covarmat(wantedlabels::Array{String,1})
 			}
 			res <- res/(ncov-1)
 			"""
-			covmat[i,j] =covmat[j,i] = rcopy(Array{Float64},R"res")
+			covmat[i,j] =covmat[j,i] = rcopy(Array{Float64},cov_res)
 		end
 		covmat[i,i] = 1.0
 	end
@@ -39,7 +39,7 @@ function calc_covarmat(wantedlabels::Array{String,1}, usedlabels::Array{String,1
 		interim1 = wantedlabels[i]
 		for j = i+1 : max(length(wantedlabels), length(usedlabels))
 			interim2 = wantedlabels[j]
-			R"""
+			cov_res = R"""
 			cov_x <- paste('D',$interim1,sep="$")
 			cov_y <- paste('D',$interim2,sep="$")
 			covs <- ds.cov(x=cov_x,y=cov_y)
@@ -51,10 +51,10 @@ function calc_covarmat(wantedlabels::Array{String,1}, usedlabels::Array{String,1
 			res <- res/(ncov-1)
 			"""
 			if(i <= length(usedlabels) && j <= length(wantedlabels))
-				@inbounds covmat2[i,j] = covmat2[j,i] = rcopy(Array{Float64},R"res")
+				@inbounds covmat2[i,j] = covmat2[j,i] = rcopy(Array{Float64},cov_res)
 			end
 			if(j >= i+1 && i <= length(wantedlabels) && j <= length(wantedlabels))
-				@inbounds covmat[i,j]  = covmat2[j,i] = rcopy(Array{Float64},R"res")
+				@inbounds covmat[i,j]  = covmat2[j,i] = rcopy(Array{Float64},cov_res)
 			end
 		end
 		covmat[i,i] = covmat2[i,i] = 1.0
@@ -69,11 +69,14 @@ y::String -> Array which contains the name of the endpoint variable
 """
 function calc_unibeta(wantedlabels::Array{String,1},y::String)
 	unibeta::Array{Float64} = zeros(length(wantedlabels))
-	for i in 1:length(wantedlabels)
-		R"""
-		res <- ds.glm(paste('D',$y,sep="$") ~ 1+paste('D',$wantedlabels[1],sep="$"), family = 'gaussian')$coefficients[2,1]
+	for i = 1 : length(wantedlabels)
+		unib = R"""
+			vary <- paste('D',$y,sep="$")
+			varx <- paste('D',$wantedlabels[$i],sep="$")
+			myformula <- paste(vary, varx, sep = "~")
+			res <- ds.glm(myformula, family = 'gaussian')$coefficients[2,1]
 		"""
-		unibeta[i] = rcopy(Array{Float64},R"res")
+		unibeta[i] = rcopy(unib)
 	end
 	return Unibeta(unibeta,wantedlabels)
 end
