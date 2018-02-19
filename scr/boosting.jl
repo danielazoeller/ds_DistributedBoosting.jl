@@ -58,12 +58,13 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 
 		stopper = length(unique(myscratch.selections)
 
+		if(myscratch.actualstepno >= 2)
+			println(myscratch.actualstepno," bosstingsteps performed \n recent selected labels: ", myscratch.selections)
+		end
+		myscratch.actualstepno -= 1
+
 	end
 
-	if(myscratch.actualstepno >= 2)
-		println(myscratch.actualstepno," bosstingsteps performed \n recent selected labels: ", myscratch.selections)
-	end
-	myscratch.actualstepno -= 1
 	println("--------------------------------------------------------------------------------------------------------------------------------- \n Algorithm ended successfully.")
 	if(myscratch.actualstepno == myscratch.stepno)
 		println("Reason for termination: Maximum number of steps reached.")
