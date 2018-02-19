@@ -9,6 +9,14 @@ x::Int -> Number of labels which should be additionally called
 maxvar::Int -> Maximum number of selected variables
 """
 function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x::Int, maxvar::Int=stepno)
+	if(length(labels)<a)
+		warn("Number of potential predictors smaller than a. a is reduced to maximum.")
+		a = length(labels)
+	end
+	if(length(labels)<x)
+		warn("Number of potential predictors smaller than x. x is reduced to maximum.")
+		x = length(labels)
+	end
 	myscratch = Boostscratch(1,
 							 Array{Float64,1}(),
 							 Array{Float64,1}(),
@@ -72,7 +80,8 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 	else
 		println("Reason for termination: Maximum number of variables included.")
 	end
-	println("Number of boostingsteps total: ", myscratch.actualstepno, "\n Selected variables: ", myscratch.selections, "\n ")
+	println("Number of boostingsteps total: ", myscratch.actualstepno, "\n Histroy of selected variables: ", myscratch.selections, 
+				"\n Selected variables: ", unique(myscratch.selections), " (", length(unique(myscratch.selections)), " different variables).")
 end
 
 
