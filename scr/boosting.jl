@@ -6,9 +6,10 @@ y::String -> Name of the endpoint variable
 labels::Array{String,1} -> Names of the potential predictor variables
 a::Int -> Number of labels for the covariance matrix to start with
 x::Int -> Number of labels which should be additionally called
+nu::Float64 -> Shrinkage paramter, needs to be between 0 and 1. Default 0.1.
 maxvar::Int -> Maximum number of selected variables
 """
-function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x::Int, maxvar::Int=stepno)
+function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x::Int, nu::Float64 = 0.1, maxvar::Int=stepno)
 	if(length(labels)<a)
 		warn("Number of potential predictors smaller than a. a is reduced to maximum.")
 		a = length(labels)
@@ -28,7 +29,7 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 							 Array{String,1}(),
 							 Array{String,1}(),
 							 Array{String,1}(),
-							 0.1,
+							 nu,
 							 stepno,
 							 1,
 							 Array{Float64,1}(),
@@ -103,10 +104,12 @@ table::Array{String,1} -> Array containing the table names (either one dimension
 servernames::Array{String,1} -> Array containing the server names (same dimension as url).
 check::Bool -> If true: It is checked if the variables are standardized, if false not. The default is true.
 ignore::Bool -> Only relevant if check=true. If true: the algorithm will continue even if the variables are not standardizes, if false the algorithm will stop. The default is false.
+nu::Float64 -> Shrinkage paramter, needs to be between 0 and 1. Default 0.1.
 maxvar::Int -> Maximum number of boosting steps
 """
 function ds_boosting(stepno::Int, y::String, a::Int, x::Int, path_RLibrary::String, url::Array{String,1},
-	user::String, password::String, table::Array{String,1}, servernames::Array, check::Bool=true, ignore::Bool=false, maxvar::Int=stepno)
+	user::String, password::String, table::Array{String,1}, servernames::Array, check::Bool=true, ignore::Bool=false, 
+	nu::Float64 =0.1, maxvar::Int=stepno)
 	
 	ds_start(path_RLibrary, url, user, password,table, servernames, check, ignore)
 
@@ -116,7 +119,7 @@ function ds_boosting(stepno::Int, y::String, a::Int, x::Int, path_RLibrary::Stri
 	"""
 	labels = rcopy(labels_pre)
 
-	myscratch = ds_boosting(stepno, y, labels, a, x, maxvar)
+	myscratch = ds_boosting(stepno, y, labels, a, x, nu, maxvar)
 
 	return myscratch
 end
