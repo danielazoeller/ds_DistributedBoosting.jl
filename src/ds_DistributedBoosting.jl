@@ -1,6 +1,6 @@
 module ds_DistributedBoosting
 
-using RCall
+
 
 export Unibeta, Covarmat, Boostscratch 
 export ds_loadPkg, ds_login, ds_check, ds_start
