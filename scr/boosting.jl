@@ -43,6 +43,7 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 	myscratch.actualnom = myscratch.pooledunibeta.unibeta
 
 	myscratch.wantedlabels = selectionofcovs(myscratch.pooledunibeta, myscratch.a)
+	warn(length(myscratch.wantedlabels), " covariances are called, this might take some time.")
 	myscratch.pooledcovarmat = calc_covarmat(myscratch.wantedlabels)
 	myscratch.usedlabels = deepcopy(myscratch.wantedlabels)
 
@@ -82,6 +83,8 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 	end
 	println("Number of boostingsteps total: ", myscratch.actualstepno, "\n Histroy of selected variables: ", myscratch.selections, 
 				"\n Selected variables: ", unique(myscratch.selections), " (", length(unique(myscratch.selections)), " different variables).")
+
+	return myscratch
 end
 
 
@@ -113,5 +116,7 @@ function ds_boosting(stepno::Int, y::String, a::Int, x::Int, path_RLibrary::Stri
 	"""
 	labels = rcopy(labels_pre)
 
-	ds_boosting(stepno, y, labels, a, x, maxvar)
+	myscratch = ds_boosting(stepno, y, labels, a, x, maxvar)
+
+	return myscratch
 end
