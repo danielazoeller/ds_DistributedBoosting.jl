@@ -12,8 +12,8 @@ function calc_covarmat(wantedlabels::Array{String,1})
 			interim2 = wantedlabels[j]
 			@rput interim2
 			cov_res = R"""
-			cov_x <- paste('D',interim1,sep="\u0024")
-			cov_y <- paste('D',interim2,sep="\u0024")
+			cov_x <- paste('D',interim1,sep="$")
+			cov_y <- paste('D',interim2,sep="$")
 			covs <- ds.cov(x=cov_x,y=cov_y)
 			res <- ncov <- 0
 			for(k in 1:length(covs)){
@@ -43,8 +43,8 @@ function calc_covarmat!(myscratch::Boostscratch)
 			interim2 = myscratch.usedlabels[j]
 			@rput interim2
 			cov_res = R"""
-			cov_x <- paste('D',interim1,sep="\u0024")
-			cov_y <- paste('D',interim2,sep="\u0024")
+			cov_x <- paste('D',interim1,sep="$")
+			cov_y <- paste('D',interim2,sep="$")
 			covs <- ds.cov(x=cov_x,y=cov_y)
 			res <- ncov <- 0
 			for(k in 1:length(covs)){
@@ -75,8 +75,8 @@ function calc_unibeta(wantedlabels::Array{String,1},y::String)
 		@rput label_i
 		@rput y
 		unib = R"""
-			vary <- paste('D',y,sep="\u0024")
-			varx <- paste('D',label_i,sep="\u0024")
+			vary <- paste('D',y,sep="$")
+			varx <- paste('D',label_i,sep="$")
 			myformula <- paste(vary, varx, sep = "~")
 			res <- ds.glm(myformula, family = 'gaussian')$coefficients[2,1]
 		"""
