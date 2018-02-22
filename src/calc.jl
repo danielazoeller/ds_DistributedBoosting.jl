@@ -7,11 +7,13 @@ function calc_covarmat(wantedlabels::Array{String,1})
 	covmat = ones(length(wantedlabels),length(wantedlabels))
 	for i = 1 : length(wantedlabels) - 1
 		interim1 = wantedlabels[i]
+		@rput interim1
 		for j = i + 1 : length(wantedlabels)
 			interim2 = wantedlabels[j]
+			@rput interim2
 			cov_res = R"""
-			cov_x <- paste('D',$interim1,sep="\$")
-			cov_y <- paste('D',$interim2,sep="\$")
+			cov_x <- paste('D',interim1,sep="\u0024")
+			cov_y <- paste('D',interim2,sep="\u0024")
 			covs <- ds.cov(x=cov_x,y=cov_y)
 			res <- ncov <- 0
 			for(k in 1:length(covs)){
@@ -36,11 +38,13 @@ function calc_covarmat!(myscratch::Boostscratch)
 	covmat3 = ones(length(myscratch.usedlabels), length(myscratch.wantedlabels))
 	for i = 1 : length(myscratch.wantedlabels)
 		interim1 = myscratch.wantedlabels[i]
+		@rput interim1
 		for j = 1 : length(myscratch.usedlabels)
 			interim2 = myscratch.usedlabels[j]
+			@rput interim2
 			cov_res = R"""
-			cov_x <- paste('D',$interim1,sep="\$")
-			cov_y <- paste('D',$interim2,sep="\$")
+			cov_x <- paste('D',interim1,sep="\u0024")
+			cov_y <- paste('D',interim2,sep="\u0024")
 			covs <- ds.cov(x=cov_x,y=cov_y)
 			res <- ncov <- 0
 			for(k in 1:length(covs)){
@@ -67,11 +71,14 @@ y::String -> Array which contains the name of the endpoint variable
 function calc_unibeta(wantedlabels::Array{String,1},y::String)
 	unibeta = Array{Float64}(length(wantedlabels))
 	for i = 1 : length(wantedlabels)
+		label_i = wantedlabels[i]
+		@rput label_i
+		@rput y
 		unib = R"""
-			vary <- paste('D',$y,sep="\$")
-			varx <- paste('D',$wantedlabels[$i],sep="\$")
+			vary <- paste('D',y,sep="\u0024")
+			varx <- paste('D',label_i,sep="\u0024")
 			myformula <- paste(vary, varx, sep = "~")
-			res <- ds.glm(myformula, family = 'gaussian')\$coefficients[2,1]
+			res <- ds.glm(myformula, family = 'gaussian')$coefficients[2,1]
 		"""
 		unibeta[i] = rcopy(unib)
 	end
