@@ -8,6 +8,8 @@ The data need to be provided on DataSHIELD server and a login (username / passwo
 The most important assumption is that the data are standardized beforehand (mean=0, sd=1). 
 Please only provide already standardized data, otherwise the results will not be valid.
 
+The package uses RCall, thus R needs to be available. You need to install the R-Packages `opal`, `dsBaseClient`, `dsStatsClient`, and `dsModellingClient` in your R-library.
+
 
 ## Installation:
 
