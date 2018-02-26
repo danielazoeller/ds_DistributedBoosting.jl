@@ -43,8 +43,8 @@ end
 
 include("Session.jl")
 include("calc.jl")
+include("getselections.jl")
 include("boost.jl")
 include("boosting.jl")
-include("getselections.jl")
 
 end
