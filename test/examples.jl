@@ -1,3 +1,5 @@
+using ds_DistributedBoosting
+
 # Install the R-Packages opal, dsBaseClient, dsStatsClient, and dsModellingClient in your R-library
 
 # Please change to your settings!
@@ -21,12 +23,12 @@ YourMaxvar = 15
 YourLabels = ["X1","X2","X3","X4","X5","X6","X7","X8","X9","X10"]
 
 # Perform Boosting for all available variables
-result = ds_boosting(YourStepno, YourEndpoint, YourStartBuffer, YourRpath, 
+result = ds_boosting(YourStepno, YourEndpoint, YourStartBuffer, YourRpath,
             YourRpath, YourUrls,YourUser,YourPassword,YourTable,
             YourServernames,YourCheck)
 
 # Perform Boosting for selected variables
-result_sel = ds_boosting(YourStepno, YourEndpoint, YourStartBuffer, YourRpath, 
+result_sel = ds_boosting(YourStepno, YourEndpoint, YourStartBuffer, YourRpath,
             YourRpath, YourUrls,YourUser,YourPassword,YourTable,
-            YourServernames,YourCheck,YourWarning, 
+            YourServernames,YourCheck,YourWarning,
             YourShrink, YourMaxvar, YourLabels)
