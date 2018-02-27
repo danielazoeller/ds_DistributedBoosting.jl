@@ -67,14 +67,14 @@ Trace of DataSHIELD (e.g. loaded variables).
 julia> ds_login(["https://server_url1:port", "https://server_url2:port"],
 "user","password",["Projectname.Tablename"],["Server1","Server2"])
 RCall.RObject{RCall.VecSxp}
-\$Server1
+Server1
 url: https://server_url1:port
 name: Server1
 version: x.x.x.-xxxx
 username: user
 rid: xxxx-xxxx-xxx
 
-\$Server2
+Server2
 url: https://server_url2:port
 name: Server2
 version: x.x.x.-xxxx
@@ -242,10 +242,10 @@ No arguments.
 ```julia-repl
 julia> ds_logout()
 RCall.RObject{RCall.VecSxp}
-$Server1
+Server1
 NULL
 
-$Server2
+Server2
 NULL
 ```
 """
