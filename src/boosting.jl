@@ -153,7 +153,7 @@ Calls functions ds_start() and ds_boosting().
 
 # Returned objects
 - `ds_DistributedBoosting.Boostscratch`: Containing the information of the results of the distributed boosting algorithm.
-Trace of DataSHIELD (e.g. loaded variables).
+- Trace of DataSHIELD (e.g. loaded variables).
 
 # Examples
 ```julia-repl

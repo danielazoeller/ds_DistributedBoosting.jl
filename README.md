@@ -24,6 +24,7 @@ The following tables provide an overview of the functions of the package,
 together with a short description.
 You can find more detailed descriptions for each function using the Julia help mode 
 (entered by typing `?` at the beginning of the Julia command prompt).
+Note that `ds_boosting` is overloaded.
 
 ### Functions for starting and ending a session
 

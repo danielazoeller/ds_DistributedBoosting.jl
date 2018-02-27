@@ -74,8 +74,8 @@ with new data resulting from a new data call.
 - `myscratch::Boostscratch`: Bootscratch-Data-Container for boosting
 
 # Returned objects
-No objects returned.
-myscratch.actualnom is updated.
+- No objects returned.
+- `myscratch.actualnom` is updated.
 
 # Examples
 ```julia-repl

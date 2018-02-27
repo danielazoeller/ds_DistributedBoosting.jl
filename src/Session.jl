@@ -60,7 +60,7 @@ The function ds_loadPkg() needs to be called first.
 
 # Returned objects
 - `RCall.RObject{RCall.StrSxp}`: Overview of loaded DataSHIELD-server.
-Trace of DataSHIELD (e.g. loaded variables).
+- Trace of DataSHIELD (e.g. loaded variables).
 
 # Examples
 ```julia-repl
@@ -117,8 +117,8 @@ The function ds_login() needs to be called first.
 - `labels::Array{String,1}=Array{String,1}()`: Labels of variables that should be checked.
 
 # Returned objects
-No return objects.
-Trace includes overview of already checked variables.
+- No return objects.
+- Trace includes overview of already checked variables.
 
 # Examples
 ```julia-repl
@@ -204,8 +204,8 @@ Calls the functions ds_loadPKG(), ds_login, and optionally ds_check().
 - `labels::Array{String,1}=Array{String,1}()`: Labels of variables that should be checked.
 
 # Returned objects
-No objects are returned.
-Trace of DataSHIELD (e.g. loaded variables).
+- No objects are returned.
+- Trace of DataSHIELD (e.g. loaded variables).
 
 # Examples
 ```julia-repl
