@@ -27,7 +27,7 @@ result = ds_boosting(YourStepno, YourEndpoint, YourStartBuffer, YourRpath,
             YourRpath, YourUrls,YourUser,YourPassword,YourTable,
             YourServernames,YourCheck)
 
-# Perform Boosting for selected variables
+# Perform Boosting for selected variables (YourLabels)
 result_sel = ds_boosting(YourStepno, YourEndpoint, YourStartBuffer, YourRpath,
             YourRpath, YourUrls,YourUser,YourPassword,YourTable,
             YourServernames,YourCheck,YourWarning,
