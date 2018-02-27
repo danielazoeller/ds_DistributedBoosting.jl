@@ -66,7 +66,7 @@ Function name    | Short description
 
 ## Examples
 
-Prerequisite for running the [example code here](test_part/examples.jl) is that the `ds_DistributedBoosting` package is installed:
+Prerequisite for running the [example code here](test/examples.jl) is that the `ds_DistributedBoosting` package is installed:
 
     Pkg.clone("https://github.com/danielazoeller/ds_DistributedBoosting.jl.git")
 
