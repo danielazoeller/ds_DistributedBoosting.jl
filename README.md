@@ -81,4 +81,6 @@ The example code needs to be adjusted to your own settings.
 
 The algorithm is explained and evaluated in:
 
-Zöller, D., Lenz, S., Binder, H. (2018). *Distributed multivariable modeling for signature development under data protection constraints*. BioarXiv.
+> Zöller, D., Lenz, S., Binder, H. (2018). *Distributed multivariable modeling for signature development under data protection constraints*. eprint arXiv:1803.00422. ArXiv.
+
+You can find the article [here](https://arxiv.org/abs/1803.00422).
