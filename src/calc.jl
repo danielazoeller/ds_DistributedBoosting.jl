@@ -188,7 +188,7 @@ function calc_unibeta(wantedlabels::Array{String,1},y::String)
 			# Define formula (need to be done seperately to achieve one string)
 			myformula <- paste(vary, varx, sep = "~")
 
-			# Get effect estimates - several iterations
+			# Get effect estimates - several iterations needed
 			interim <- ds.glm(myformula, family = 'gaussian')
 			res <- (interim$nsubs / (interim$nsubs - 1)) * interim$$coefficients[2,1]
 		"""
