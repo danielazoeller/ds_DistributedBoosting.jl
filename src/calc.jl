@@ -1,6 +1,6 @@
 """
 	calc_covarmat(wantedlabels)
-	
+
 Function, which calculates the pooled covariance matrix of with respect to the relevant labels (for the first matrix calculation).
 
 Returns an Covarmat object (.covmat=covariance matrix, .lables=correponding variable labels).
@@ -42,14 +42,14 @@ function calc_covarmat(wantedlabels::Array{String,1})
 			# Get real variablename, combined with tablename
 			cov_x <- paste('D',interim1,sep="$")
 			cov_y <- paste('D',interim2,sep="$")
-			
+
 			# Get covariances per cohort using DataSHIELD
 			covs <- ds.cov(x=cov_x,y=cov_y)
 
 			# Pooling of covariances per cohort using weighted means, robust estimate (number samples -1)
 			res <- ncov <- 0
 			for(k in 1:length(covs)){
-  				res <- res + (unlist(covs[[k]][1]) * unlist(covs[[k]][2]))
+  				res <- res + (unlist(covs[[k]][1]) * (unlist(covs[[k]][2])-1))
   				ncov <- ncov + unlist(covs[[k]][2])
 			}
 			res <- res/(ncov-1)
@@ -64,10 +64,10 @@ end
 
 """
 	calc_covarmat!(myscratch)
-	
-Function, which calculates the expansions of the pooled covariance matrix 
+
+Function, which calculates the expansions of the pooled covariance matrix
 with respect to the relevant labels saved in myscratch.wantedlabels
-and expands the saved covariance matrix in myscratch. 
+and expands the saved covariance matrix in myscratch.
 
 Thus, myscratch.pooledcovarmat is expanded and contains the covariances for myscratch.usedlabels and myscratch.wantedlabels.
 myscratch.usedlabels is expanded by myscratch.wantedlabels.
@@ -129,7 +129,7 @@ function calc_covarmat!(myscratch::Boostscratch)
 			# Pooling of covariances per cohort using weighted means, robust estimate (number samples -1)
 			res <- ncov <- 0
 			for(k in 1:length(covs)){
-				res <- res + (unlist(covs[[k]][1]) * unlist(covs[[k]][2]))
+				res <- res + (unlist(covs[[k]][1]) * (unlist(covs[[k]][2])-1))
 				ncov <- ncov + unlist(covs[[k]][2])
 			}
 			res <- res/(ncov-1)
@@ -189,7 +189,8 @@ function calc_unibeta(wantedlabels::Array{String,1},y::String)
 			myformula <- paste(vary, varx, sep = "~")
 
 			# Get effect estimates - several iterations
-			res <- ds.glm(myformula, family = 'gaussian')$coefficients[2,1]
+			interim <- ds.glm(myformula, family = 'gaussian')
+			res <- (interim$nsubs / (interim$nsubs - 1)) * interim$$coefficients[2,1]
 		"""
 		# Save result
 		unibeta[i] = rcopy(unib)
