@@ -181,7 +181,7 @@ function calc_unibeta(wantedlabels::Array{String,1},y::String)
 
 		# Calculate y ~ 1 + label_i estimate
 		unib = R"""
-			# Get real variablenames, combined with tablename
+			# Get real variablename, combined with tablename
 			vary <- paste('D',y,sep="$")
 			varx <- paste('D',label_i,sep="$")
 
@@ -190,7 +190,7 @@ function calc_unibeta(wantedlabels::Array{String,1},y::String)
 
 			# Get effect estimates - several iterations needed
 			interim <- ds.glm(myformula, family = 'gaussian')
-			res <- (interim$nsubs / (interim$nsubs - 1)) * interim$$coefficients[2,1]
+			res <- (interim$nsubs / (interim$nsubs - 1)) * interim$coefficients[2,1]
 		"""
 		# Save result
 		unibeta[i] = rcopy(unib)
