@@ -18,7 +18,7 @@ julia> calc_covarmat(["X1","X2"])
 ds_DistributedBoosting.Covarmat([1.0 0.0492964; 0.0492964 1.0], String["X1", "X2"])
 ```
 """
-function calc_covarmat(wantedlabels::Array{String,1})
+function calc_covarmat(wantedlabels::Array{String,1},login::DSLogin)
 	# Get the saving place for the covariancmatrix - Initialize as 1 as diag is 1
 	covmat = ones(length(wantedlabels),length(wantedlabels))
 
@@ -159,8 +159,8 @@ function calc_covarmat!(myscratch::Boostscratch)
 				res <- res/(ncov-1)
 				"""
 			catch
-				ds_login(login.url, login.user, login.password, 
-					login.table, login.servernames)
+				ds_login(myscratch.login.url, myscratch.login.user, myscratch.login.password, 
+					myscratch.login.table, myscratch.login.servernames)
 					cov_res = R"""
 				# Get real variablename, combined with tablename
 				cov_x <- paste('D',interim1,sep="$")

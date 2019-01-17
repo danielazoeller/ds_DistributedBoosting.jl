@@ -38,6 +38,26 @@ mutable struct Covarmat
 end
 
 """
+	DSLogin(url, user, password, table, servernames)
+
+Stucture DSLogin, containing information to loginto DataShield.
+
+#Arguments:
+- `url::Array{String,1}`: Vector with urls to DataSHIELD Servers
+- `user::String`: Username
+- `password::String`: Password or name of key
+- `table::String`: Table name to be loaded
+- `servernames::Array{String,1}`: Vector with servernames (personal choice)
+"""
+mutable struct DSLogin
+	url::Array{String,1}
+	user::String
+	password::String
+	table::String
+	servernames::Array{String,1}
+end
+
+"""
 	Boostscratch(actualstepno, actualbeta, actualscore,
 					pooledunibeta, pooledcovarmat, actualupdates,
 					selections, wantedlabels, usedlabels, nu,
@@ -85,6 +105,7 @@ mutable struct Boostscratch
 	maxvar::Int
 	y::String
 	labels::Array{String,1}
+	login::DSLogin
 end
 
 
