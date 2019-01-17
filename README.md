@@ -15,7 +15,9 @@ The package uses RCall, thus R needs to be available. You need to install the R-
 
 The `ds_DistributedBoosting` package is installed by:
 
-    Pkg.clone("https://github.com/danielazoeller/ds_DistributedBoosting.jl.git")
+    using Pkg
+    Pkg.add(PackageSpec(url="https://github.com/danielazoeller/ds_DistributedBoosting.jl.git", 
+        rev="master"))
 
 
 ## Overview of functions

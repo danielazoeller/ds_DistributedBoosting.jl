@@ -163,7 +163,7 @@ julia> result = ds_boosting(30, "Y", 20, 20, "C:/Users/Username/Documents/R/win-
 ```
 """
 function ds_boosting(stepno::Int, y::String, a::Int, x::Int, path_RLibrary::String, url::Array{String,1},
-	user::String, password::String, table::Array{String,1}, servernames::Array, check::Bool=true, ignore::Bool=false, 
+	user::String, password::String, table::Array{String,1}, servernames::Array{String,1}, check::Bool=true, ignore::Bool=false, 
 	nu::Float64 =0.1, maxvar::Int=stepno, labels::Array{String,1}=Array{String,1}())
 	
 	ds_start(path_RLibrary, url, user, password,table, servernames, check, ignore, labels)

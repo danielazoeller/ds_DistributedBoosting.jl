@@ -23,12 +23,12 @@ YourMaxvar = 15
 YourLabels = ["X1","X2","X3","X4","X5","X6","X7","X8","X9","X10"]
 
 # Perform Boosting for all available variables
-result = ds_boosting(YourStepno, YourEndpoint, YourStartBuffer, YourRpath,
+result = ds_boosting(YourStepno, YourEndpoint, YourStartBuffer, YourRunBuffer,
             YourRpath, YourUrls,YourUser,YourPassword,YourTable,
             YourServernames,YourCheck)
 
 # Perform Boosting for selected variables (YourLabels)
-result_sel = ds_boosting(YourStepno, YourEndpoint, YourStartBuffer, YourRpath,
+result_sel = ds_boosting(YourStepno, YourEndpoint, YourStartBuffer, YourRunBuffer,
             YourRpath, YourUrls,YourUser,YourPassword,YourTable,
             YourServernames,YourCheck,YourWarning,
             YourShrink, YourMaxvar, YourLabels)
