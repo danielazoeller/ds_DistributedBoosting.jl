@@ -125,7 +125,7 @@ The function ds_login() needs to be called first.
 julia> ds_check(2)
 ```
 """
-function ds_check(serveranz::Int, tolerance::Float64=0.0000000005, ignore::Bool=false, labels::Array{String,1}=Array{String,1}())
+function ds_check(serveranz::Int, ignore::Bool=false, tolerance::Float64=0.0000000005, labels::Array{String,1}=Array{String,1}())
     if(isempty(labels))
 		# Get all names of the assigned table D
         names_cov = rcopy(R"ds.colnames('D')[[1]]")
@@ -215,7 +215,7 @@ julia> ds_start("C:/Users/Username/Documents/R/win-library/R-Version",["https://
 "user","password",["Projectname.Tablename"],["Server1","Server2"],false)
 ```
 """
-function ds_start(path_RLibrary::String, url::Array{String,1},user::String,password::String,table::Array{String,1},servernames::Array{String,1}, tolerance::Float64=0.0000000005,check::Bool=true, ignore::Bool=false, labels::Array{String,1}=Array{String,1}())
+function ds_start(path_RLibrary::String, url::Array{String,1},user::String,password::String,table::Array{String,1},servernames::Array{String,1}, check::Bool=true, ignore::Bool=false, tolerance::Float64=0.0000000005, labels::Array{String,1}=Array{String,1}())
     # Load needed R-package
     ds_loadPkg(path_RLibrary)
 
@@ -225,7 +225,7 @@ function ds_start(path_RLibrary::String, url::Array{String,1},user::String,passw
     if(check)
         # Checking of standardization
         @warn("The standardization of the variables will be checked (mean=0 (firstly), sd=1). All variables are checked subsequently and the algorithm stops when at least one variable is not standardized. The algrotihm might take some time.")
-        ds_check(length(servernames),tolerance,ignore,labels)
+        ds_check(length(servernames),ignore,tolerance,labels)
     end
 end
 
