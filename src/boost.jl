@@ -105,8 +105,8 @@ function reboost!(myscratch::Boostscratch)
 		
 		# Update the score functions one the newly called variables
 		for j = 1 : length(myscratch.wantedlabels)
-			myscratch.actualnom[findfirst(myscratch.pooledunibeta.labels, myscratch.wantedlabels[j])] -=
-				myscratch.actualupdates[i] * covar[findfirst(myscratch.pooledcovarmat.labels, myscratch.wantedlabels[j])]
+			myscratch.actualnom[findfirst(isequal(myscratch.wantedlabels[j]),myscratch.pooledunibeta.labels)] -=
+				myscratch.actualupdates[i] * covar[findfirst(isequal(myscratch.wantedlabels[j]), myscratch.pooledcovarmat.labels)]
 		end
 	end
 end
