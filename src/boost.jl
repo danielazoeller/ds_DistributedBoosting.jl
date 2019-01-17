@@ -48,14 +48,15 @@ function boost!(myscratch::Boostscratch)
 	
 	# Get covariances from all potential variables with selected one from covariance matrix
 	covar = getcovarfromtriangular(myscratch.pooledcovarmat.covarmat,
-				findfirst(myscratch.pooledcovarmat.labels,
-					myscratch.pooledunibeta.labels[myscratch.actualsel]
+				findfirst(isequal(myscratch.pooledunibeta.labels[myscratch.actualsel]),
+					myscratch.pooledcovarmat.labels
 				)
 			)
 	
 	# Update corresponding score vector
 	@simd for i = 1 : length(covar)
-		@inbounds myscratch.actualnom[findfirst(myscratch.pooledunibeta.labels, myscratch.pooledcovarmat.labels[i])] -=
+		@inbounds myscratch.actualnom[findfirst(isequal(myscratch.pooledcovarmat.labels[i]),
+												myscratch.pooledunibeta.labels)] -=
 			myscratch.actualupdates[myscratch.actualstepno] * covar[i]
 	end
 	# Calculate the current score of selected variable
@@ -100,7 +101,7 @@ function reboost!(myscratch::Boostscratch)
 	for i = 1 : (myscratch.actualstepno-1)
 		# Get covariance of all variables with the one selected in boosting step i
 		covar = getcovarfromtriangular(myscratch.pooledcovarmat.covarmat,
-					findfirst(myscratch.pooledcovarmat.labels, myscratch.selections[i]))
+					findfirst(isequal(myscratch.selections[i]), myscratch.pooledcovarmat.labels))
 		
 		# Update the score functions one the newly called variables
 		for j = 1 : length(myscratch.wantedlabels)

@@ -129,7 +129,9 @@ function ds_check(serveranz::Int, tolerance::Float64=0.0000000005, ignore::Bool=
     if(isempty(labels))
 		# Get all names of the assigned table D
         names_cov = rcopy(R"ds.colnames('D')[[1]]")
-	end
+    else 
+        names_cov = deepcopy(labels)
+    end
         
 
     # Check if mean approx 0, loop is stopped if the first is not
@@ -151,9 +153,9 @@ function ds_check(serveranz::Int, tolerance::Float64=0.0000000005, ignore::Bool=
     if(rcopy(mean_values))
         # mean unqual to 0, thus no standarization was performed
         if(ignore)
-            @warn("Values need to be standardized, but mean value is unqual to 0 (variance is not checked). The results of the algorithm might be unvalid.")
+            @warn("Values need to be standardized, but mean value is unqual to 0 (variance is not checked and check for mean is stopped). The results of the algorithm might be unvalid.")
         else
-            error("Values need to be standardized, but mean value is unqual to 0 (variance is not checked). The results of the algorithm might be unvalid and the evaluation has been stopped.")
+            error("Values need to be standardized, but mean value is unqual to 0 (variance is not checked and check for mean is stopped). The results of the algorithm might be unvalid and the evaluation has been stopped.")
         end
     else
         # mean approx. 0, so sd is checked for approx 1, loop is stopped if the first is not
@@ -175,9 +177,9 @@ function ds_check(serveranz::Int, tolerance::Float64=0.0000000005, ignore::Bool=
         if(rcopy(sd_values))
             # sd unqual to 1, thus no standardization was performed
             if(ignore)
-                warn("Values need to be standardized, but sd value is unqual to 1 (mean is equal to 0). The results of the algorithm might be unvalid.")
+                @warn("Values need to be standardized, but sd value is unqual to 1 (mean is equal to 0 but check of variance is stopped). The results of the algorithm might be unvalid.")
             else
-                error("Values need to be standardized, but sd value is unqual to 1 (mean is equal to 0). The results of the algorithm might be unvalid and the evaluation has been stopped.")
+                error("Values need to be standardized, but sd value is unqual to 1 (mean is equal to 0 but check of variance is stopped). The results of the algorithm might be unvalid and the evaluation has been stopped.")
             end
         end
     end
@@ -213,7 +215,7 @@ julia> ds_start("C:/Users/Username/Documents/R/win-library/R-Version",["https://
 "user","password",["Projectname.Tablename"],["Server1","Server2"],false)
 ```
 """
-function ds_start(path_RLibrary::String, url::Array{String,1},user::String,password::String,table::Array{String,1},servernames::Array{String,1}, check::Bool=true, ignore::Bool=false, labels::Array{String,1}=Array{String,1}())
+function ds_start(path_RLibrary::String, url::Array{String,1},user::String,password::String,table::Array{String,1},servernames::Array{String,1}, tolerance::Float64=0.0000000005,check::Bool=true, ignore::Bool=false, labels::Array{String,1}=Array{String,1}())
     # Load needed R-package
     ds_loadPkg(path_RLibrary)
 
@@ -222,8 +224,8 @@ function ds_start(path_RLibrary::String, url::Array{String,1},user::String,passw
 
     if(check)
         # Checking of standardization
-        warn("The standardization of the variables will be checked (mean=0 (firstly), sd=1). All variables are checked subsequently and the algorithm stops when at least one variable is not standardized. The algrotihm might take some time.")
-        ds_check(length(servernames),ignore,labels)
+        @warn("The standardization of the variables will be checked (mean=0 (firstly), sd=1). All variables are checked subsequently and the algorithm stops when at least one variable is not standardized. The algrotihm might take some time.")
+        ds_check(length(servernames),tolerance,ignore,labels)
     end
 end
 

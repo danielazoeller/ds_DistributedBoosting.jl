@@ -30,14 +30,14 @@ function selectionofcovs(unibeta::Unibeta, numberofcovs::Int, usedlabels::Array{
 	# If there are already usedlabels, remove them from the potential list of variable names (no need to call them again)
 	if(!isempty(usedlabels))
 		for i = 1 : length(usedlabels)
-			select = findfirst(dummy.labels, usedlabels[i])
+			select = findfirst(isequal(usedlabels[i]),dummy.labels)
 			deleteat!(dummy.unibeta, select)
 			deleteat!(dummy.labels, select)
 		end
 	end
 
 	# Get the numberofcovs new labels to be called
-	wantedlabels = Array{String,1}(numberofcovs)
+	wantedlabels = Array{String,1}(undef,numberofcovs)
 	for i = 1 : length(wantedlabels)
 		# Select the one with the highest Score
 		select = findmax(dummy.unibeta)[2]
@@ -91,7 +91,7 @@ function getselections(myscratch::Boostscratch, newselval::Float64)
 	# Iterate through actual scorevector
 	for i = 1 : length(myscratch.actualnom)
 		# If actualscore for variable is bigger than current score and no covariance for the variable is called yet, the variable is selected by the heuristic
-		if(myscratch.actualnom[i]^2 >= newselval && findfirst(myscratch.pooledcovarmat.labels, myscratch.pooledunibeta.labels[i]) == 0)
+		if(myscratch.actualnom[i]^2 >= newselval && findfirst(isequal(myscratch.pooledunibeta.labels[i]), myscratch.pooledcovarmat.labels) == 0)
 			wantedlabels = vcat(wantedlabels, myscratch.pooledunibeta.labels[i])
 		end
 	end
