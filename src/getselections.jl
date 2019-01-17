@@ -91,7 +91,7 @@ function getselections(myscratch::Boostscratch, newselval::Float64)
 	# Iterate through actual scorevector
 	for i = 1 : length(myscratch.actualnom)
 		# If actualscore for variable is bigger than current score and no covariance for the variable is called yet, the variable is selected by the heuristic
-		if(myscratch.actualnom[i]^2 >= newselval && findfirst(isequal(myscratch.pooledunibeta.labels[i]), myscratch.pooledcovarmat.labels) == 0)
+		if(myscratch.actualnom[i]^2 >= newselval && typeof(findfirst(isequal(myscratch.pooledunibeta.labels[i]), myscratch.pooledcovarmat.labels)) != Int64)
 			wantedlabels = vcat(wantedlabels, myscratch.pooledunibeta.labels[i])
 		end
 	end
