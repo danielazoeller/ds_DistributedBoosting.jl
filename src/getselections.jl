@@ -68,7 +68,7 @@ labels which should be called additionally.
 # Examples
 ```julia-repl
 julia> lab = ["X1","X2","X3","X4","X5","X6","X7","X8","X9","X10"]
-julia> myscratch = Boostscratch(1,Array{Float64,1}(),Array{Float64,1}(),Unibeta(Array{Float64,1}(),Array{String,1}()),Covarmat(Array{Float64,2}(),Array{String,1}()),Array{Float64,1}(10),Array{String,1}(),Array{String,1}(),Array{String,1}(),0.1,10,1,Array{Float64,1}(),1,1,10,"Y",lab)
+julia> myscratch = Boostscratch(1,Array{Float64,1}(),Array{Float64,1}(),Unibeta(Array{Float64,1}(),Array{String,1}()),Covarmat(Array{Float64}(undef,0,0),Array{String,1}()),Array{Float64,1}(10),Array{String,1}(),Array{String,1}(),Array{String,1}(),0.1,10,1,Array{Float64,1}(),1,1,10,"Y",lab)
 
 julia> myscratch.pooledunibeta = calc_unibeta(lab,"Y")
 julia> myscratch.actualbeta = zeros(length(myscratch.pooledunibeta.unibeta))

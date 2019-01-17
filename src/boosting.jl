@@ -48,7 +48,7 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 							 Array{Float64,1}(),
 							 Unibeta(Array{Float64,1}(),
 									 Array{String,1}()),
-							 Covarmat(Array{Float64,2}(),
+							 Covarmat(Array{Float64}(undef,0,0),
 							 		  Array{String,1}()),
 							 Array{Float64,1}(stepno),
 							 Array{String,1}(),

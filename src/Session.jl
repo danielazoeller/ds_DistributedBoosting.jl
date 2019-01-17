@@ -151,7 +151,7 @@ function ds_check(serveranz::Int, tolerance::Float64=0.0000000005, ignore::Bool=
     if(rcopy(mean_values))
         # mean unqual to 0, thus no standarization was performed
         if(ignore)
-            warn("Values need to be standardized, but mean value is unqual to 0 (variance is not checked). The results of the algorithm might be unvalid.")
+            @warn("Values need to be standardized, but mean value is unqual to 0 (variance is not checked). The results of the algorithm might be unvalid.")
         else
             error("Values need to be standardized, but mean value is unqual to 0 (variance is not checked). The results of the algorithm might be unvalid and the evaluation has been stopped.")
         end
