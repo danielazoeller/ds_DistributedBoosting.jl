@@ -118,7 +118,7 @@ julia> calc_covarmat!(myscratch)
 """
 function calc_covarmat!(myscratch::Boostscratch)
 	# Get the covariance of the wantedlabels (symmetrical) - Q4
-	covmat = calc_covarmat(myscratch.wantedlabels)
+	covmat = calc_covarmat(myscratch.wantedlabels,myscratch.login)
 	# Get the saving place for the covariancmatrices for wantedlabels times usedlabels - Initialize as 1 as diag is 1 (potentially not symmetrical)
 	# Two for Q2 and Q3, with dimension interchanged
 	covmat2 = ones(length(myscratch.wantedlabels), length(myscratch.usedlabels))

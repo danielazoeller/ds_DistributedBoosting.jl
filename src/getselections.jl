@@ -37,14 +37,14 @@ function selectionofcovs(unibeta::Unibeta, numberofcovs::Int, usedlabels::Array{
 	end
 
 	# Get the numberofcovs new labels to be called
-	wantedlabels = Array{String,1}(undef,numberofcovs)
+	wantedlabels = Array{String,1}()
 	for i = 1 : length(wantedlabels)
 		if length(dummy.unibeta)==0
 			break
 		end
 		# Select the one with the highest Score
 		select = findmax(dummy.unibeta)[2]
-		wantedlabels[i] = dummy.labels[select]
+		wantedlabels = vcat(wantedlabels, dummy.labels[select])
 
 		# Delete corresponding variable from list for potential variables from now on
 		deleteat!(dummy.unibeta, select)
