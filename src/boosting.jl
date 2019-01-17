@@ -72,7 +72,7 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 
 	# Get first wantedlabels for calling covariances 
 	myscratch.wantedlabels = selectionofcovs(myscratch.pooledunibeta, myscratch.a)
-	@warn (length(myscratch.wantedlabels), " covariances are called, this might take some time.")
+	@warn ("Covariances with ", length(myscratch.wantedlabels), " new variables are called, this might take some time.")
 	myscratch.pooledcovarmat = calc_covarmat(myscratch.wantedlabels)
 	myscratch.usedlabels = deepcopy(myscratch.wantedlabels)
 
@@ -92,7 +92,7 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 		# If wantedlables is filled, new covariances need to be called, otherwise the algorithm has all information
 		# reboost is necessary to get the actual score vectors after the previous updates for the new variables
 		if(length(myscratch.wantedlabels) > 0)
-			@warn (length(myscratch.wantedlabels), " new covariances are called, this might take some time.")
+			@warn ("Covariances with ", length(myscratch.wantedlabels), " new variables are called, this might take some time.")
 			calc_covarmat!(myscratch)
 			reboost!(myscratch)
 		end
@@ -106,6 +106,10 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 
 		println(myscratch.actualstepno," bosstingsteps performed \n recent selected labels: ", myscratch.selections)
 		myscratch.actualstepno += 1
+
+		if length(myscratch.wantedlabels)==0
+			break
+		end
 	end
 
 	# Needed as stepno is increased at end of loop
