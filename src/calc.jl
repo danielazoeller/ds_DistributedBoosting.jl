@@ -168,7 +168,7 @@ ds_DistributedBoosting.Unibeta([2.10027, 0.335083], String["X1", "X2"])
 """
 function calc_unibeta(wantedlabels::Array{String,1},y::String)
 	# Intitiate saving place for univariable beta estimates
-	unibeta = Array{Float64, length(wantedlabels)}
+	unibeta = zeros(length(wantedlabels))
 
 	# Iterate through all variables
 	for i = 1 : length(wantedlabels)
