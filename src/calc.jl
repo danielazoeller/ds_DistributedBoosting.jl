@@ -38,22 +38,45 @@ function calc_covarmat(wantedlabels::Array{String,1})
 			@rput interim2
 
 			#Calculate covariance between var 1 and var 2
-			cov_res = R"""
-			# Get real variablename, combined with tablename
-			cov_x <- paste('D',interim1,sep="$")
-			cov_y <- paste('D',interim2,sep="$")
+			try
+				ds_login(login.url, login.user, login.password, 
+					login.table, login.servernames)
+				cov_res = R"""
+				# Get real variablename, combined with tablename
+				cov_x <- paste('D',interim1,sep="$")
+				cov_y <- paste('D',interim2,sep="$")
 
-			# Get covariances per cohort using DataSHIELD
-			covs <- ds.cov(x=cov_x,y=cov_y)
+				# Get covariances per cohort using DataSHIELD
+				covs <- ds.cov(x=cov_x,y=cov_y)
 
-			# Pooling of covariances per cohort using weighted means, robust estimate (number samples -1)
-			res <- ncov <- 0
-			for(k in 1:length(covs)){
-  				res <- res + (unlist(covs[[k]][1]) * (unlist(covs[[k]][2])-1))
-  				ncov <- ncov + unlist(covs[[k]][2])
-			}
-			res <- res/(ncov-1)
-			"""
+				# Pooling of covariances per cohort using weighted means, robust estimate (number samples -1)
+				res <- ncov <- 0
+				for(k in 1:length(covs)){
+					res <- res + (unlist(covs[[k]][1]) * (unlist(covs[[k]][2])-1))
+					ncov <- ncov + unlist(covs[[k]][2])
+				}
+				res <- res/(ncov-1)
+				"""
+			catch
+				ds_login(login.url, login.user, login.password, 
+					login.table, login.servernames)
+				cov_res = R"""
+				# Get real variablename, combined with tablename
+				cov_x <- paste('D',interim1,sep="$")
+				cov_y <- paste('D',interim2,sep="$")
+
+				# Get covariances per cohort using DataSHIELD
+				covs <- ds.cov(x=cov_x,y=cov_y)
+
+				# Pooling of covariances per cohort using weighted means, robust estimate (number samples -1)
+				res <- ncov <- 0
+				for(k in 1:length(covs)){
+					res <- res + (unlist(covs[[k]][1]) * (unlist(covs[[k]][2])-1))
+					ncov <- ncov + unlist(covs[[k]][2])
+				}
+				res <- res/(ncov-1)
+				"""
+			end
 			# Save result
 			covmat[i,j] =covmat[j,i] = rcopy(cov_res)
 		end
@@ -118,22 +141,43 @@ function calc_covarmat!(myscratch::Boostscratch)
 			@rput interim2
 
 			# Calculate covariances using DataSHIELD
-			cov_res = R"""
-			# Get real variablename, combined with tablename
-			cov_x <- paste('D',interim1,sep="$")
-			cov_y <- paste('D',interim2,sep="$")
+			try
+				cov_res = R"""
+				# Get real variablename, combined with tablename
+				cov_x <- paste('D',interim1,sep="$")
+				cov_y <- paste('D',interim2,sep="$")
 
-			# Get covariances per cohort using DataSHIELD
-			covs <- ds.cov(x=cov_x,y=cov_y)
+				# Get covariances per cohort using DataSHIELD
+				covs <- ds.cov(x=cov_x,y=cov_y)
 
-			# Pooling of covariances per cohort using weighted means, robust estimate (number samples -1)
-			res <- ncov <- 0
-			for(k in 1:length(covs)){
-				res <- res + (unlist(covs[[k]][1]) * (unlist(covs[[k]][2])-1))
-				ncov <- ncov + unlist(covs[[k]][2])
-			}
-			res <- res/(ncov-1)
-			"""
+				# Pooling of covariances per cohort using weighted means, robust estimate (number samples -1)
+				res <- ncov <- 0
+				for(k in 1:length(covs)){
+					res <- res + (unlist(covs[[k]][1]) * (unlist(covs[[k]][2])-1))
+					ncov <- ncov + unlist(covs[[k]][2])
+				}
+				res <- res/(ncov-1)
+				"""
+			catch
+				ds_login(login.url, login.user, login.password, 
+					login.table, login.servernames)
+					cov_res = R"""
+				# Get real variablename, combined with tablename
+				cov_x <- paste('D',interim1,sep="$")
+				cov_y <- paste('D',interim2,sep="$")
+
+				# Get covariances per cohort using DataSHIELD
+				covs <- ds.cov(x=cov_x,y=cov_y)
+
+				# Pooling of covariances per cohort using weighted means, robust estimate (number samples -1)
+				res <- ncov <- 0
+				for(k in 1:length(covs)){
+					res <- res + (unlist(covs[[k]][1]) * (unlist(covs[[k]][2])-1))
+					ncov <- ncov + unlist(covs[[k]][2])
+				}
+				res <- res/(ncov-1)
+				"""
+			end
 			# Save result - Interchanged index as interchanged dimensions
 			covmat2[i,j] = covmat3[j,i] = rcopy(cov_res)
 		end
@@ -166,7 +210,7 @@ julia> calc_unibeta(["X1","X2"],"Y")
 ds_DistributedBoosting.Unibeta([2.10027, 0.335083], String["X1", "X2"])
 ```
 """
-function calc_unibeta(wantedlabels::Array{String,1},y::String)
+function calc_unibeta(wantedlabels::Array{String,1},y::String,login::DSLogin)
 	# Intitiate saving place for univariable beta estimates
 	unibeta = zeros(length(wantedlabels))
 
@@ -180,18 +224,35 @@ function calc_unibeta(wantedlabels::Array{String,1},y::String)
 		@rput y
 
 		# Calculate y ~ 1 + label_i estimate
-		unib = R"""
-			# Get real variablename, combined with tablename
-			vary <- paste('D',y,sep="$")
-			varx <- paste('D',label_i,sep="$")
+		try
+			unib = R"""
+				# Get real variablename, combined with tablename
+				vary <- paste('D',y,sep="$")
+				varx <- paste('D',label_i,sep="$")
 
-			# Define formula (need to be done seperately to achieve one string)
-			myformula <- paste(vary, varx, sep = "~")
+				# Define formula (need to be done seperately to achieve one string)
+				myformula <- paste(vary, varx, sep = "~")
 
-			# Get effect estimates - several iterations needed
-			interim <- ds.glm(myformula, family = 'gaussian')
-			res <- (interim$nsubs / (interim$nsubs - 1)) * interim$coefficients[2,1]
-		"""
+				# Get effect estimates - several iterations needed
+				interim <- ds.glm(myformula, family = 'gaussian')
+				res <- (interim$nsubs / (interim$nsubs - 1)) * interim$coefficients[2,1]
+			"""
+		catch
+			ds_login(login.url, login.user, login.password, 
+				login.table, login.servernames)
+			unib = R"""
+				# Get real variablename, combined with tablename
+				vary <- paste('D',y,sep="$")
+				varx <- paste('D',label_i,sep="$")
+
+				# Define formula (need to be done seperately to achieve one string)
+				myformula <- paste(vary, varx, sep = "~")
+
+				# Get effect estimates - several iterations needed
+				interim <- ds.glm(myformula, family = 'gaussian')
+				res <- (interim$nsubs / (interim$nsubs - 1)) * interim$coefficients[2,1]
+			"""
+		end
 		# Save result
 		unibeta[i] = rcopy(unib)
 	end
