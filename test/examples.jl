@@ -16,6 +16,7 @@ YourEndpoint = "Y"
 YourStartBuffer = 20
 YourRunBuffer = 20
 YourCheck = true
+YourTolerance=0.00000000000005
 
 YourWarning = true
 YourShrink = 0.1
@@ -30,5 +31,5 @@ result = ds_boosting(YourStepno, YourEndpoint, YourStartBuffer, YourRunBuffer,
 # Perform Boosting for selected variables (YourLabels)
 result_sel = ds_boosting(YourStepno, YourEndpoint, YourStartBuffer, YourRunBuffer,
             YourRpath, YourUrls,YourUser,YourPassword,YourTable,
-            YourServernames,YourCheck,YourWarning,
+            YourServernames,YourCheck,YourWarning, YourTolerance,
             YourShrink, YourMaxvar, YourLabels)
