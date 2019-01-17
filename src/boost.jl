@@ -33,7 +33,7 @@ function boost!(myscratch::Boostscratch)
 	myscratch.actualscore = myscratch.actualnom.^2 # ./varx
 
 	# Get the variable with the highest score - this is the selected one
-	myscratch.actualsel = indmax(myscratch.actualscore)
+	myscratch.actualsel = findmax(myscratch.actualscore)[2]
 
 	# Save that this is the currently selected one in selections - vector
 	myscratch.selections = vcat(myscratch.selections, myscratch.pooledunibeta.labels[myscratch.actualsel])

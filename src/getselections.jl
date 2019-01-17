@@ -40,7 +40,7 @@ function selectionofcovs(unibeta::Unibeta, numberofcovs::Int, usedlabels::Array{
 	wantedlabels = Array{String,1}(numberofcovs)
 	for i = 1 : length(wantedlabels)
 		# Select the one with the highest Score
-		select = indmax(dummy.unibeta)
+		select = findmax(dummy.unibeta)[2]
 		wantedlabels[i] = dummy.labels[select]
 
 		# Delete corresponding variable from list for potential variables from now on

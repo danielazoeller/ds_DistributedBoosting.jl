@@ -168,7 +168,7 @@ ds_DistributedBoosting.Unibeta([2.10027, 0.335083], String["X1", "X2"])
 """
 function calc_unibeta(wantedlabels::Array{String,1},y::String)
 	# Intitiate saving place for univariable beta estimates
-	unibeta = Array{Float64}(length(wantedlabels))
+	unibeta = Array{Float64, length(wantedlabels)}
 
 	# Iterate through all variables
 	for i = 1 : length(wantedlabels)
@@ -181,16 +181,16 @@ function calc_unibeta(wantedlabels::Array{String,1},y::String)
 
 		# Calculate y ~ 1 + label_i estimate
 		unib = R"""
-			# Get real variablenames, combined with tablename
+			# Get real variablename, combined with tablename
 			vary <- paste('D',y,sep="$")
 			varx <- paste('D',label_i,sep="$")
 
 			# Define formula (need to be done seperately to achieve one string)
 			myformula <- paste(vary, varx, sep = "~")
 
-			# Get effect estimates - several iterations
+			# Get effect estimates - several iterations needed
 			interim <- ds.glm(myformula, family = 'gaussian')
-			res <- (interim$nsubs / (interim$nsubs - 1)) * interim$$coefficients[2,1]
+			res <- (interim$nsubs / (interim$nsubs - 1)) * interim$coefficients[2,1]
 		"""
 		# Save result
 		unibeta[i] = rcopy(unib)
