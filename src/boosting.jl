@@ -81,7 +81,7 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 	# Get wantedlabels after first boosting step
 	myscratch.wantedlabels = getselections(myscratch, newselval)
 		
-	println(myscratch.actualstepno," bosstingsteps performed \n recent selected labels: ", myscratch.selections)
+	println(myscratch.actualstepno," bosstingstep performed \n recent selected labels: ", myscratch.selections)
 
 	myscratch.actualstepno += 1
 
@@ -107,9 +107,6 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 		println(myscratch.actualstepno," bosstingsteps performed \n recent selected labels: ", myscratch.selections)
 		myscratch.actualstepno += 1
 
-		if length(myscratch.wantedlabels)==0
-			break
-		end
 	end
 
 	# Needed as stepno is increased at end of loop
