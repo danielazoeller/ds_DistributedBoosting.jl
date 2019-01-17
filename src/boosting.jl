@@ -50,7 +50,7 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 									 Array{String,1}()),
 							 Covarmat(Array{Float64}(undef,0,0),
 							 		  Array{String,1}()),
-							 Array{Float64,1}(stepno),
+							 zeros(stepno),
 							 Array{String,1}(),
 							 Array{String,1}(),
 							 Array{String,1}(),
