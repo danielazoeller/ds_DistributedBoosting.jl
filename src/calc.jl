@@ -38,43 +38,43 @@ function calc_covarmat(wantedlabels::Array{String,1},login::DSLogin)
 			@rput interim2
 
 			#Calculate covariance between var 1 and var 2
-			try
+			cov_res = try
 				ds_login(login.url, login.user, login.password, 
 					login.table, login.servernames)
-				cov_res = R"""
-				# Get real variablename, combined with tablename
-				cov_x <- paste('D',interim1,sep="$")
-				cov_y <- paste('D',interim2,sep="$")
+				R"""
+					# Get real variablename, combined with tablename
+					cov_x <- paste('D',interim1,sep="$")
+					cov_y <- paste('D',interim2,sep="$")
 
-				# Get covariances per cohort using DataSHIELD
-				covs <- ds.cov(x=cov_x,y=cov_y)
+					# Get covariances per cohort using DataSHIELD
+					covs <- ds.cov(x=cov_x,y=cov_y)
 
-				# Pooling of covariances per cohort using weighted means, robust estimate (number samples -1)
-				res <- ncov <- 0
-				for(k in 1:length(covs)){
-					res <- res + (unlist(covs[[k]][1]) * (unlist(covs[[k]][2])-1))
-					ncov <- ncov + unlist(covs[[k]][2])
-				}
-				res <- res/(ncov-1)
+					# Pooling of covariances per cohort using weighted means, robust estimate (number samples -1)
+					res <- ncov <- 0
+					for(k in 1:length(covs)){
+						res <- res + (unlist(covs[[k]][1]) * (unlist(covs[[k]][2])-1))
+						ncov <- ncov + unlist(covs[[k]][2])
+					}
+					res <- res/(ncov-1)
 				"""
 			catch
 				ds_login(login.url, login.user, login.password, 
 					login.table, login.servernames)
-				cov_res = R"""
-				# Get real variablename, combined with tablename
-				cov_x <- paste('D',interim1,sep="$")
-				cov_y <- paste('D',interim2,sep="$")
+				R"""
+					# Get real variablename, combined with tablename
+					cov_x <- paste('D',interim1,sep="$")
+					cov_y <- paste('D',interim2,sep="$")
 
-				# Get covariances per cohort using DataSHIELD
-				covs <- ds.cov(x=cov_x,y=cov_y)
+					# Get covariances per cohort using DataSHIELD
+					covs <- ds.cov(x=cov_x,y=cov_y)
 
-				# Pooling of covariances per cohort using weighted means, robust estimate (number samples -1)
-				res <- ncov <- 0
-				for(k in 1:length(covs)){
-					res <- res + (unlist(covs[[k]][1]) * (unlist(covs[[k]][2])-1))
-					ncov <- ncov + unlist(covs[[k]][2])
-				}
-				res <- res/(ncov-1)
+					# Pooling of covariances per cohort using weighted means, robust estimate (number samples -1)
+					res <- ncov <- 0
+					for(k in 1:length(covs)){
+						res <- res + (unlist(covs[[k]][1]) * (unlist(covs[[k]][2])-1))
+						ncov <- ncov + unlist(covs[[k]][2])
+					}
+					res <- res/(ncov-1)
 				"""
 			end
 			# Save result
@@ -141,41 +141,41 @@ function calc_covarmat!(myscratch::Boostscratch)
 			@rput interim2
 
 			# Calculate covariances using DataSHIELD
-			try
-				cov_res = R"""
-				# Get real variablename, combined with tablename
-				cov_x <- paste('D',interim1,sep="$")
-				cov_y <- paste('D',interim2,sep="$")
+			cov_res = try
+				R"""
+					# Get real variablename, combined with tablename
+					cov_x <- paste('D',interim1,sep="$")
+					cov_y <- paste('D',interim2,sep="$")
 
-				# Get covariances per cohort using DataSHIELD
-				covs <- ds.cov(x=cov_x,y=cov_y)
+					# Get covariances per cohort using DataSHIELD
+					covs <- ds.cov(x=cov_x,y=cov_y)
 
-				# Pooling of covariances per cohort using weighted means, robust estimate (number samples -1)
-				res <- ncov <- 0
-				for(k in 1:length(covs)){
-					res <- res + (unlist(covs[[k]][1]) * (unlist(covs[[k]][2])-1))
-					ncov <- ncov + unlist(covs[[k]][2])
-				}
-				res <- res/(ncov-1)
+					# Pooling of covariances per cohort using weighted means, robust estimate (number samples -1)
+					res <- ncov <- 0
+					for(k in 1:length(covs)){
+						res <- res + (unlist(covs[[k]][1]) * (unlist(covs[[k]][2])-1))
+						ncov <- ncov + unlist(covs[[k]][2])
+					}
+					res <- res/(ncov-1)
 				"""
 			catch
 				ds_login(myscratch.login.url, myscratch.login.user, myscratch.login.password, 
 					myscratch.login.table, myscratch.login.servernames)
-					cov_res = R"""
-				# Get real variablename, combined with tablename
-				cov_x <- paste('D',interim1,sep="$")
-				cov_y <- paste('D',interim2,sep="$")
+				R"""
+					# Get real variablename, combined with tablename
+					cov_x <- paste('D',interim1,sep="$")
+					cov_y <- paste('D',interim2,sep="$")
 
-				# Get covariances per cohort using DataSHIELD
-				covs <- ds.cov(x=cov_x,y=cov_y)
+					# Get covariances per cohort using DataSHIELD
+					covs <- ds.cov(x=cov_x,y=cov_y)
 
-				# Pooling of covariances per cohort using weighted means, robust estimate (number samples -1)
-				res <- ncov <- 0
-				for(k in 1:length(covs)){
-					res <- res + (unlist(covs[[k]][1]) * (unlist(covs[[k]][2])-1))
-					ncov <- ncov + unlist(covs[[k]][2])
-				}
-				res <- res/(ncov-1)
+					# Pooling of covariances per cohort using weighted means, robust estimate (number samples -1)
+					res <- ncov <- 0
+					for(k in 1:length(covs)){
+						res <- res + (unlist(covs[[k]][1]) * (unlist(covs[[k]][2])-1))
+						ncov <- ncov + unlist(covs[[k]][2])
+					}
+					res <- res/(ncov-1)
 				"""
 			end
 			# Save result - Interchanged index as interchanged dimensions
@@ -224,8 +224,8 @@ function calc_unibeta(wantedlabels::Array{String,1},y::String,login::DSLogin)
 		@rput y
 
 		# Calculate y ~ 1 + label_i estimate
-		try
-			unib = R"""
+		unib = try
+			 R"""
 				# Get real variablename, combined with tablename
 				vary <- paste('D',y,sep="$")
 				varx <- paste('D',label_i,sep="$")
@@ -237,10 +237,10 @@ function calc_unibeta(wantedlabels::Array{String,1},y::String,login::DSLogin)
 				interim <- ds.glm(myformula, family = 'gaussian')
 				res <- (interim$nsubs / (interim$nsubs - 1)) * interim$coefficients[2,1]
 			"""
-		catch
+			catch
 			ds_login(login.url, login.user, login.password, 
 				login.table, login.servernames)
-			unib = R"""
+			R"""
 				# Get real variablename, combined with tablename
 				vary <- paste('D',y,sep="$")
 				varx <- paste('D',label_i,sep="$")

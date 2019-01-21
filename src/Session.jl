@@ -138,6 +138,7 @@ function ds_check(serveranz::Int, ignore::Bool=false, tolerance::Float64=0.00000
     mean_values = R"""
     tolerance <-  $tolerance
     dimension <- length($names_cov)
+    print($names_cov)
     res <- FALSE
     cat("Check of mean: ")
     for (i in 1:dimension) {

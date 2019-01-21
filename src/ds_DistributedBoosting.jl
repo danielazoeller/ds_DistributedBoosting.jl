@@ -51,8 +51,8 @@ Stucture DSLogin, containing information to loginto DataShield.
 """
 mutable struct DSLogin
 	url::Array{String,1}
-	user::Array{String,1}
-	password::Array{String,1}
+	user::String
+	password::String
 	table::Array{String,1}
 	servernames::Array{String,1}
 end
