@@ -44,16 +44,16 @@ Stucture DSLogin, containing information to loginto DataShield.
 
 #Arguments:
 - `url::Array{String,1}`: Vector with urls to DataSHIELD Servers
-- `user::String`: Username
-- `password::String`: Password or name of key
-- `table::String`: Table name to be loaded
+- `user::Array{String,1}`: Username
+- `password::Array{String,1}`: Password or name of key
+- `table::Array{String,1}`: Table name to be loaded
 - `servernames::Array{String,1}`: Vector with servernames (personal choice)
 """
 mutable struct DSLogin
 	url::Array{String,1}
-	user::String
-	password::String
-	table::String
+	user::Array{String,1}
+	password::Array{String,1}
+	table::Array{String,1}
 	servernames::Array{String,1}
 end
 
