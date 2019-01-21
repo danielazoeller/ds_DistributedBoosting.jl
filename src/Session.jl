@@ -137,7 +137,7 @@ function ds_check(serveranz::Int, ignore::Bool=false, tolerance::Float64=0.00000
     # Check if mean approx 0, loop is stopped if the first is not
     mean_values = R"""
     tolerance <-  $tolerance
-    dimension <- ds.dim('D',type="combine")[[1]][2]
+    dimension <- length($names_cov)
     res <- FALSE
     cat("Check of mean: ")
     for (i in 1:dimension) {
@@ -161,7 +161,7 @@ function ds_check(serveranz::Int, ignore::Bool=false, tolerance::Float64=0.00000
         # mean approx. 0, so sd is checked for approx 1, loop is stopped if the first is not
         sd_values = R"""
         tolerance <-  $tolerance
-        dimension <- ds.dim('D',type="combine")[[1]][2]
+        dimension <- length($names_cov)
         res <- FALSE
         cat("\n Check of sd: ")
         for (i in 1:dimension) {
