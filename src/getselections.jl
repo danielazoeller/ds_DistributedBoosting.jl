@@ -38,8 +38,8 @@ function selectionofcovs(unibeta::Unibeta, numberofcovs::Int, usedlabels::Array{
 
 	# Get the numberofcovs new labels to be called
 	wantedlabels = Array{String,1}()
-	for i = 1 : length(wantedlabels)
-		if length(dummy.unibeta)==0
+	for i = 1 : numberofcovs
+		if isempty(dummy.unibeta)
 			break
 		end
 		# Select the one with the highest Score
@@ -102,7 +102,7 @@ function getselections(myscratch::Boostscratch, newselval::Float64)
 	end
 
 	# If additional variables should be called (myscratch.x) and there are potential variabels (thus some called in step beforehand), call buffer of size x
-	if(myscratch.x > 0 && length(wantedlabels) > 0)
+	if(myscratch.x > 0 && !isempty(wantedlabels))
 		wantedlabels = vcat(wantedlabels, selectionofcovs(Unibeta(myscratch.actualnom, myscratch.pooledunibeta.labels), 
 															myscratch.x, vcat(myscratch.pooledcovarmat.labels, wantedlabels)))
 	end
