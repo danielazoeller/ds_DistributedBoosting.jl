@@ -28,6 +28,15 @@ You can find more detailed descriptions for each function using the Julia help m
 (entered by typing `?` at the beginning of the Julia command prompt).
 Note that `ds_boosting` is overloaded.
 
+### New mutable structures
+
+Structure name    | Short description
+---------------- | -----------------
+`Unibeta`        | Containing pooled univariable estimates and corresponding labels.
+`Covarmat`       | Containing pooled covariance matrix and corresponding labels.
+`DSLogin`        | Containing login information for DataSHIELD-servers.
+`Bootsscratch`   | Containing all relevant information for the algorithm. Resulting structure.
+
 ### Functions for starting and ending a session
 
 Function name    | Short description
