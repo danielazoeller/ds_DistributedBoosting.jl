@@ -39,8 +39,6 @@ function calc_covarmat(wantedlabels::Array{String,1},login::DSLogin)
 
 			#Calculate covariance between var 1 and var 2
 			cov_res = try
-				ds_login(login.url, login.user, login.password, 
-					login.table, login.servernames)
 				R"""
 					# Get real variablename, combined with tablename
 					cov_x <- paste('D',interim1,sep="$")
