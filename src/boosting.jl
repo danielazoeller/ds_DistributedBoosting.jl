@@ -1,5 +1,5 @@
 """
-	ds_boosting(stepno, y, labels, a, x, nu=0.1, maxvar=stepno)
+	ds_boosting(stepno, y, labels, a, x, login, nu=0.1, maxvar=stepno)
 
 Function to perform the complete distributed heuristic boosting algorithm using DataSHIELD based on boost! and reboost!
 
@@ -9,7 +9,7 @@ Function to perform the complete distributed heuristic boosting algorithm using 
 - `labels::Array{String,1}`: Names of the potential predictor variables
 - `a::Int`: Number of labels for the covariance matrix to start with
 - `x::Int`: Number of labels which should be additionally called
-- `login::DSLogin`: Logindata to DataSHIELD
+- `login::DSLogin`: Logindata to DataSHIELD-server. Will be used when connection is lost.
 - `nu::Float64`: Shrinkage paramter, needs to be between 0 and 1. Default 0.1.
 - `maxvar::Int`: Maximum number of selected variables
 

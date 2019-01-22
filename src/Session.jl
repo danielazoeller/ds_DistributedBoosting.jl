@@ -100,7 +100,7 @@ function ds_login(url::Array{String,1},user::String,password::String,table::Arra
 end
 
 """
-    ds_check(serveranz, tolerance=0.0000000000000005, ignore=false)
+    ds_check(serveranz, ignore=false, tolerance=0.0000000000000005, labels=Array{String,1}())
 
 Function to check if the variables are standardized.
 
@@ -108,13 +108,14 @@ The function uses the package RCall.
 The DataSHIELD functions ds.colnames(), ds.dim(), ds.mean(), ds.var().
 Firstly, the mean will be checked (should be 0) 
 and only if the check is valid, the sd will be checked (should be 1).
+The check is interrupted when the first unstandardized variable is found.
 The function ds_login() needs to be called first.
 
 # Arguments
 - `serveranz::Int`: Number of used servers.
 - `tolerance::Float64=0.0000000005`: Tolerance for comparison of mean and sd.
 - `ignore::Bool=false`: If true: the algorithm will continue even if the variables are not standardizes, if false the algorithm will stop. The default is false.
-- `labels::Array{String,1}=Array{String,1}()`: Labels of variables that should be checked.
+- `labels::Array{String,1}=Array{String,1}()`: Labels of variables that should be checked. By default all variables are checked.
 
 # Returned objects
 - No return objects.
