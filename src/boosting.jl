@@ -1,5 +1,5 @@
 """
-	ds_boosting(stepno, y, labels, a, x, nu=0.1, maxvar=stepno)
+	ds_boosting(stepno, y, labels, a, x, login, nu=0.1, maxvar=stepno)
 
 Function to perform the complete distributed heuristic boosting algorithm using DataSHIELD based on boost! and reboost!
 
@@ -9,6 +9,7 @@ Function to perform the complete distributed heuristic boosting algorithm using 
 - `labels::Array{String,1}`: Names of the potential predictor variables
 - `a::Int`: Number of labels for the covariance matrix to start with
 - `x::Int`: Number of labels which should be additionally called
+- `login::DSLogin`: Logindata to DataSHIELD-server. Will be used when connection is lost.
 - `nu::Float64`: Shrinkage paramter, needs to be between 0 and 1. Default 0.1.
 - `maxvar::Int`: Maximum number of selected variables
 
@@ -31,7 +32,7 @@ Number of boostingsteps total: 10
 ds_DistributedBoosting.Boostscratch(10, [0.0, 0.0, -1.25053, 0.0, 0.0, 0.0, 0.861599, 0.0, 0.0, -0.831607], [4.41114, 0.112281, 6.0799, 0.032712, 0.332016, 0.930665, 5.72913, 3.26847, 1.39211, 6.48666], ds_DistributedBoosting.Unibeta([2.10027, 0.335083, -2.47552, -0.180864, -0.576209, 0.96471, 2.43896, 1.80789, -1.17988, -2.2922], String["X1", "X2", "X3", "X4", "X5", "X6", "X7", "X8", "X9", "X10"]), ds_DistributedBoosting.Covarmat([1.0 0.110723 -0.0383974; 0.110723 1.0 0.178274; -0.0383974 0.178274 1.0], String["X3", "X7", "X10"]), [-0.359872, -0.323885, 0.308955, -0.300352, -0.296071, 0.286693, -0.276565, -0.2707, 0.265951, -0.254689], String["X3", "X3", "X7", "X10", "X3", "X7", "X10", "X3", "X7", "X10"], String[], String["X3", "X7", "X10"], 0.1, 10, 10, [2.10027, 0.335083, -2.47552, -0.180864, -0.576209, 0.96471, 2.43896, 1.80789, -1.17988, -2.2922], 3, 5, 10, "Y", String["X1", "X2", "X3", "X4", "X5", "X6", "X7", "X8", "X9", "X10"])
 ```
 """
-function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x::Int, nu::Float64 = 0.1, maxvar::Int=stepno)
+function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x::Int, login::DSLogin, nu::Float64 = 0.1, maxvar::Int=stepno)
 	# Make sure that algorithm performs when number of variables is low
 	if(length(labels)<a)
 		@warn "Number of potential predictors smaller than a. a is reduced to maximum."
@@ -48,9 +49,9 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 							 Array{Float64,1}(),
 							 Unibeta(Array{Float64,1}(),
 									 Array{String,1}()),
-							 Covarmat(Array{Float64,2}(),
+							 Covarmat(Array{Float64}(undef,0,0),
 							 		  Array{String,1}()),
-							 Array{Float64,1}(stepno),
+							 zeros(stepno),
 							 Array{String,1}(),
 							 Array{String,1}(),
 							 Array{String,1}(),
@@ -62,18 +63,19 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 							 x,
 							 maxvar,
 							 y,
-							 labels)
+							 labels,
+							 login)
 
 	# Calculate pooled univariable effect estimates of all variables in labels
-	myscratch.pooledunibeta = calc_unibeta(labels,y)
+	myscratch.pooledunibeta = calc_unibeta(labels,y,myscratch.login)
 	# Initiate corresponding vectors
 	myscratch.actualbeta = zeros(length(myscratch.pooledunibeta.unibeta))
 	myscratch.actualnom = myscratch.pooledunibeta.unibeta
 
 	# Get first wantedlabels for calling covariances 
 	myscratch.wantedlabels = selectionofcovs(myscratch.pooledunibeta, myscratch.a)
-	@warn (length(myscratch.wantedlabels), " covariances are called, this might take some time.")
-	myscratch.pooledcovarmat = calc_covarmat(myscratch.wantedlabels)
+	@warn ("Covariances with ", length(myscratch.wantedlabels), " new variables are called, this might take some time.")
+	myscratch.pooledcovarmat = calc_covarmat(myscratch.wantedlabels,myscratch.login)
 	myscratch.usedlabels = deepcopy(myscratch.wantedlabels)
 
 	# Perform first boosting step
@@ -81,7 +83,7 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 	# Get wantedlabels after first boosting step
 	myscratch.wantedlabels = getselections(myscratch, newselval)
 		
-	println(myscratch.actualstepno," bosstingsteps performed \n recent selected labels: ", myscratch.selections)
+	println(myscratch.actualstepno," bosstingstep performed \n recent selected labels: ", myscratch.selections)
 
 	myscratch.actualstepno += 1
 
@@ -92,7 +94,7 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 		# If wantedlables is filled, new covariances need to be called, otherwise the algorithm has all information
 		# reboost is necessary to get the actual score vectors after the previous updates for the new variables
 		if(length(myscratch.wantedlabels) > 0)
-			@warn (length(myscratch.wantedlabels), " new covariances are called, this might take some time.")
+			@warn ("Covariances with ", length(myscratch.wantedlabels), " new variables are called, this might take some time.")
 			calc_covarmat!(myscratch)
 			reboost!(myscratch)
 		end
@@ -106,6 +108,7 @@ function ds_boosting(stepno::Int, y::String, labels::Array{String,1}, a::Int, x:
 
 		println(myscratch.actualstepno," bosstingsteps performed \n recent selected labels: ", myscratch.selections)
 		myscratch.actualstepno += 1
+
 	end
 
 	# Needed as stepno is increased at end of loop
@@ -163,10 +166,12 @@ julia> result = ds_boosting(30, "Y", 20, 20, "C:/Users/Username/Documents/R/win-
 ```
 """
 function ds_boosting(stepno::Int, y::String, a::Int, x::Int, path_RLibrary::String, url::Array{String,1},
-	user::String, password::String, table::Array{String,1}, servernames::Array{String,1}, check::Bool=true, ignore::Bool=false, 
+	user::String, password::String, table::Array{String,1}, servernames::Array{String,1}, check::Bool=true, ignore::Bool=false, tolerance::Float64=0.0000000005,
 	nu::Float64 =0.1, maxvar::Int=stepno, labels::Array{String,1}=Array{String,1}())
 	
-	ds_start(path_RLibrary, url, user, password,table, servernames, check, ignore, labels)
+	ds_start(path_RLibrary, url, user, password,table, servernames, check, ignore, tolerance, labels)
+
+	login = DSLogin(url, user, password, table, servernames)
 
 	labels_pre = R"""
 	labels <- ds.colnames('D')[[1]]
@@ -177,7 +182,7 @@ function ds_boosting(stepno::Int, y::String, a::Int, x::Int, path_RLibrary::Stri
 		labels = rcopy(labels_pre)
 	end
 
-	myscratch = ds_boosting(stepno, y, labels, a, x, nu, maxvar)
+	myscratch = ds_boosting(stepno, y, labels, a, x, login, nu, maxvar)
 
 	return myscratch
 end

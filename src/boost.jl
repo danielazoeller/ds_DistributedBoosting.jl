@@ -48,14 +48,15 @@ function boost!(myscratch::Boostscratch)
 	
 	# Get covariances from all potential variables with selected one from covariance matrix
 	covar = getcovarfromtriangular(myscratch.pooledcovarmat.covarmat,
-				findfirst(myscratch.pooledcovarmat.labels,
-					myscratch.pooledunibeta.labels[myscratch.actualsel]
+				findfirst(isequal(myscratch.pooledunibeta.labels[myscratch.actualsel]),
+					myscratch.pooledcovarmat.labels
 				)
 			)
 	
 	# Update corresponding score vector
 	@simd for i = 1 : length(covar)
-		@inbounds myscratch.actualnom[findfirst(myscratch.pooledunibeta.labels, myscratch.pooledcovarmat.labels[i])] -=
+		@inbounds myscratch.actualnom[findfirst(isequal(myscratch.pooledcovarmat.labels[i]),
+												myscratch.pooledunibeta.labels)] -=
 			myscratch.actualupdates[myscratch.actualstepno] * covar[i]
 	end
 	# Calculate the current score of selected variable
@@ -80,7 +81,7 @@ with new data resulting from a new data call.
 # Examples
 ```julia-repl
 julia> lab = ["X1","X2","X3","X4","X5","X6","X7","X8","X9","X10"]
-julia> myscratch = Boostscratch(1,Array{Float64,1}(),Array{Float64,1}(),Unibeta(Array{Float64,1}(),Array{String,1}()),Covarmat(Array{Float64,2}(),Array{String,1}()),Array{Float64,1}(10),Array{String,1}(),Array{String,1}(),Array{String,1}(),0.1,10,1,Array{Float64,1}(),2,1,10,"Y",lab)
+julia> myscratch = Boostscratch(1,Array{Float64,1}(),Array{Float64,1}(),Unibeta(Array{Float64,1}(),Array{String,1}()),Covarmat(Array{Float64}(undef,0,0),Array{String,1}()),Array{Float64,1}(10),Array{String,1}(),Array{String,1}(),Array{String,1}(),0.1,10,1,Array{Float64,1}(),2,1,10,"Y",lab)
 
 julia> myscratch.pooledunibeta = calc_unibeta(lab,"Y")
 julia> myscratch.actualbeta = zeros(length(myscratch.pooledunibeta.unibeta))
@@ -100,12 +101,12 @@ function reboost!(myscratch::Boostscratch)
 	for i = 1 : (myscratch.actualstepno-1)
 		# Get covariance of all variables with the one selected in boosting step i
 		covar = getcovarfromtriangular(myscratch.pooledcovarmat.covarmat,
-					findfirst(myscratch.pooledcovarmat.labels, myscratch.selections[i]))
+					findfirst(isequal(myscratch.selections[i]), myscratch.pooledcovarmat.labels))
 		
 		# Update the score functions one the newly called variables
 		for j = 1 : length(myscratch.wantedlabels)
-			myscratch.actualnom[findfirst(myscratch.pooledunibeta.labels, myscratch.wantedlabels[j])] -=
-				myscratch.actualupdates[i] * covar[findfirst(myscratch.pooledcovarmat.labels, myscratch.wantedlabels[j])]
+			myscratch.actualnom[findfirst(isequal(myscratch.wantedlabels[j]),myscratch.pooledunibeta.labels)] -=
+				myscratch.actualupdates[i] * covar[findfirst(isequal(myscratch.wantedlabels[j]), myscratch.pooledcovarmat.labels)]
 		end
 	end
 end

@@ -2,7 +2,7 @@ module ds_DistributedBoosting
 
 using RCall
 
-export Unibeta, Covarmat, Boostscratch 
+export Unibeta, Covarmat, DSLogin, Boostscratch 
 export ds_loadPkg, ds_login, ds_check, ds_start, ds_logout
 export calc_covarmat, calc_covarmat!, calc_unibeta
 export boost!, reboost!
@@ -35,6 +35,26 @@ Stucture Covarmat, containing 2-dimensional covariance matrix and corresponding 
 mutable struct Covarmat
 	covarmat::Array{Float64,2}
 	labels::Array{String,1}
+end
+
+"""
+	DSLogin(url, user, password, table, servernames)
+
+Stucture DSLogin, containing information to loginto DataShield.
+
+#Arguments:
+- `url::Array{String,1}`: Vector with urls to DataSHIELD Servers
+- `user::Array{String,1}`: Username
+- `password::Array{String,1}`: Password or name of key
+- `table::Array{String,1}`: Table name to be loaded
+- `servernames::Array{String,1}`: Vector with servernames (personal choice)
+"""
+mutable struct DSLogin
+	url::Array{String,1}
+	user::String
+	password::String
+	table::Array{String,1}
+	servernames::Array{String,1}
 end
 
 """
@@ -85,6 +105,7 @@ mutable struct Boostscratch
 	maxvar::Int
 	y::String
 	labels::Array{String,1}
+	login::DSLogin
 end
 
 

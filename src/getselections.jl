@@ -30,18 +30,21 @@ function selectionofcovs(unibeta::Unibeta, numberofcovs::Int, usedlabels::Array{
 	# If there are already usedlabels, remove them from the potential list of variable names (no need to call them again)
 	if(!isempty(usedlabels))
 		for i = 1 : length(usedlabels)
-			select = findfirst(dummy.labels, usedlabels[i])
+			select = findfirst(isequal(usedlabels[i]),dummy.labels)
 			deleteat!(dummy.unibeta, select)
 			deleteat!(dummy.labels, select)
 		end
 	end
 
 	# Get the numberofcovs new labels to be called
-	wantedlabels = Array{String,1}(numberofcovs)
-	for i = 1 : length(wantedlabels)
+	wantedlabels = Array{String,1}()
+	for i = 1 : numberofcovs
+		if isempty(dummy.unibeta)
+			break
+		end
 		# Select the one with the highest Score
 		select = findmax(dummy.unibeta)[2]
-		wantedlabels[i] = dummy.labels[select]
+		wantedlabels = vcat(wantedlabels, dummy.labels[select])
 
 		# Delete corresponding variable from list for potential variables from now on
 		deleteat!(dummy.unibeta, select)
@@ -68,7 +71,7 @@ labels which should be called additionally.
 # Examples
 ```julia-repl
 julia> lab = ["X1","X2","X3","X4","X5","X6","X7","X8","X9","X10"]
-julia> myscratch = Boostscratch(1,Array{Float64,1}(),Array{Float64,1}(),Unibeta(Array{Float64,1}(),Array{String,1}()),Covarmat(Array{Float64,2}(),Array{String,1}()),Array{Float64,1}(10),Array{String,1}(),Array{String,1}(),Array{String,1}(),0.1,10,1,Array{Float64,1}(),1,1,10,"Y",lab)
+julia> myscratch = Boostscratch(1,Array{Float64,1}(),Array{Float64,1}(),Unibeta(Array{Float64,1}(),Array{String,1}()),Covarmat(Array{Float64}(undef,0,0),Array{String,1}()),Array{Float64,1}(10),Array{String,1}(),Array{String,1}(),Array{String,1}(),0.1,10,1,Array{Float64,1}(),1,1,10,"Y",lab)
 
 julia> myscratch.pooledunibeta = calc_unibeta(lab,"Y")
 julia> myscratch.actualbeta = zeros(length(myscratch.pooledunibeta.unibeta))
@@ -88,16 +91,18 @@ julia> myscratch.wantedlabels = getselections(myscratch, 5.0)
 function getselections(myscratch::Boostscratch, newselval::Float64)
 	# Initiate save place for wantedlabels
 	wantedlabels = Array{String,1}()
+
 	# Iterate through actual scorevector
 	for i = 1 : length(myscratch.actualnom)
 		# If actualscore for variable is bigger than current score and no covariance for the variable is called yet, the variable is selected by the heuristic
-		if(myscratch.actualnom[i]^2 >= newselval && findfirst(myscratch.pooledcovarmat.labels, myscratch.pooledunibeta.labels[i]) == 0)
+		if(myscratch.actualnom[i]^2 >= newselval && 
+				typeof(findfirst(isequal(myscratch.pooledunibeta.labels[i]), myscratch.pooledcovarmat.labels)) != Int64)
 			wantedlabels = vcat(wantedlabels, myscratch.pooledunibeta.labels[i])
 		end
 	end
 
 	# If additional variables should be called (myscratch.x) and there are potential variabels (thus some called in step beforehand), call buffer of size x
-	if(myscratch.x > 0 && length(wantedlabels) > 0)
+	if(myscratch.x > 0 && !isempty(wantedlabels))
 		wantedlabels = vcat(wantedlabels, selectionofcovs(Unibeta(myscratch.actualnom, myscratch.pooledunibeta.labels), 
 															myscratch.x, vcat(myscratch.pooledcovarmat.labels, wantedlabels)))
 	end
