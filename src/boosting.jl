@@ -239,13 +239,15 @@ function ds_boosting(stepno::Int, y::String, a::Int, x::Int, path_RLibrary::Stri
 
 	if(isempty(labels))
 		labels = rcopy(labels_pre)
-	end
 
-	if(!isempty(leaveout))
-		for i=1:length(leaveout)
-			filter!(x -> x != leaveout[i], labels)
+		if(!isempty(leaveout))
+			for i=1:length(leaveout)
+				filter!(x -> x != leaveout[i], labels)
+			end
 		end
 	end
+
+	
 
 	myscratch = ds_boosting(stepno, y, labels, a, x, login, nu, maxvar)
 
