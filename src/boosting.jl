@@ -181,3 +181,66 @@ function ds_boosting(stepno::Int, y::String, a::Int, x::Int, path_RLibrary::Stri
 
 	return myscratch
 end
+
+
+"""
+	ds_boosting(stepno, y, a, x, path_RLibrary, url, user, password, table, servernames, check=true, ignore=false, nu=0.1, maxvar=stepno, labels=Array{String,1}(), leaveout=Array{String,1}())
+
+Wrapper function to perform the complete distributed heuristic boosting algorithm using DataSHIELD including login and assumption checks.
+
+Calls functions ds_start() and ds_boosting().
+
+# Arguments
+- `stepno::Int`: Number of Boostingsteps which should be performed
+- `y::String`: Name of the endpoint variable
+- `a::Int`: Number of labels for the covariance matrix to start with
+- `x::Int`: Number of labels which should be additionally called
+- `path_RLibrary::String`: Path to R library where R packages opal, dsBaseClient, dsStatsClient and dsModellingClient are saved
+- `url::Array{String,1}`: Array containing URLs to all DataSHIELD-Server as Strings.
+- `user::String`:  String containing the User-Name for login
+- `password::String`: String containin either the password or the name of the private key file.
+- `table::Array{String,1}`: Array containing the table names (either one dimensional if always the same or of the same length as the URL array)
+- `servernames::Array{String,1}`: Array containing the server names (same dimension as url).
+- `check::Bool=true`: If true: It is checked if the variables are standardized, if false not. The default is true.
+- `ignore::Bool=false`: Only relevant if check=true. If true: the algorithm will continue even if the variables are not standardizes, if false the algorithm will stop. The default is false.
+- `nu::Float64=0.1`: Shrinkage paramter, needs to be between 0 and 1. Default 0.1.
+- `maxvar::Int=stepno`: Maximum number of boosting steps
+- `labels::Array{String,1}=Array{String,1}()`: Names of potential predictores to be considered. If empty, all potential variables are used.
+- `leaveout::Array{String,1}=Array{String,1}()`: Names of predictors to be ignored
+
+# Returned objects
+- `ds_DistributedBoosting.Boostscratch`: Containing the information of the results of the distributed boosting algorithm.
+- Trace of DataSHIELD (e.g. loaded variables).
+
+# Examples
+```julia-repl
+julia> result = ds_boosting(30, "Y", 20, 20, "C:/Users/Username/Documents/R/win-library/R-Version",
+	   ["https://server_url1:port", "https://server_url2:port"],"user","password",
+	   ["Projectname.Tablename"],["Server1","Server2"],false)
+```
+"""
+function ds_boosting(stepno::Int, y::String, a::Int, x::Int, path_RLibrary::String, url::Array{String,1},
+	user::String, password::String, table::Array{String,1}, servernames::Array{String,1}, check::Bool=true, ignore::Bool=false, 
+	nu::Float64 =0.1, maxvar::Int=stepno, labels::Array{String,1}=Array{String,1}(),leaveout::Array{String,1}=Array{String,1}())
+	
+	ds_start(path_RLibrary, url, user, password,table, servernames, check, ignore, labels)
+
+	labels_pre = R"""
+	labels <- ds.colnames('D')[[1]]
+	labels <- labels[-which(labels==$y[1])]
+	"""
+
+	if(isempty(labels))
+		labels = rcopy(labels_pre)
+	end
+
+	if(!isempty(leaveout))
+		for i=1:length(leaveout)
+			filter!(x -> x != leaveout[i], labels)
+		end
+	end
+
+	myscratch = ds_boosting(stepno, y, labels, a, x, nu, maxvar)
+
+	return myscratch
+end
